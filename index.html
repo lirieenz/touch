@@ -1,0 +1,2396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+  <meta name="theme-color" content="#000000">
+  <title>Touch</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      touch-action: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: none;
+      position: relative;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* =========================
+       HOME
+    ========================= */
+
+    #homeScreen {
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 25px;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 35px;
+      text-align: center;
+    }
+
+    .home-card {
+      width: min(420px, 100%);
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 18px;
+      padding: 25px;
+    }
+
+    .home-card h2 {
+      margin: 0 0 18px;
+      font-size: 20px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 48px;
+      background: #181818;
+      color: white;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 0 14px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #666;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn {
+      flex: 1;
+      height: 48px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      color: white;
+      background: #222;
+    }
+
+    .btn.primary {
+      background: #e50914;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .status {
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+      margin-top: 18px;
+      min-height: 16px;
+    }
+
+    /* =========================
+       CONTROLLER
+    ========================= */
+
+    #controllerScreen {
+      background: #000;
+      flex-direction: column;
+    }
+
+    #controllerCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .controller-top {
+      position: absolute;
+      z-index: 5;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .connection-pill {
+      background: rgba(20, 20, 20, 0.85);
+      border: 1px solid #292929;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 11px;
+      color: #aaa;
+      pointer-events: auto;
+    }
+
+    .connection-pill.connected {
+      color: #8cff9a;
+    }
+
+    .controller-controls {
+      position: absolute;
+      z-index: 5;
+      left: 15px;
+      right: 15px;
+      bottom: 18px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .mode-select {
+      flex: 1;
+      height: 46px;
+      background: rgba(20, 20, 20, 0.92);
+    }
+
+    .heart-btn {
+      width: 52px;
+      height: 46px;
+      border: none;
+      border-radius: 10px;
+      background: #222;
+      color: white;
+      font-size: 23px;
+      cursor: pointer;
+    }
+
+    .heart-btn:active {
+      transform: scale(0.94);
+    }
+
+    .finger-info {
+      position: absolute;
+      z-index: 5;
+      top: 58px;
+      left: 15px;
+      font-size: 11px;
+      color: #666;
+      pointer-events: none;
+    }
+
+    /* =========================
+       RECEIVER
+    ========================= */
+
+    #receiverScreen {
+      background: #000;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .receiver-status {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: #555;
+      font-size: 11px;
+      z-index: 3;
+    }
+
+    .receiver-heart {
+      position: absolute;
+      font-size: 110px;
+      opacity: 0;
+      transform: scale(0.5);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .receiver-heart.show {
+      animation: heartPop 0.7s ease-out;
+    }
+
+    @keyframes heartPop {
+      0% {
+        opacity: 0;
+        transform: scale(0.4);
+      }
+
+      25% {
+        opacity: 1;
+        transform: scale(1.15);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.35);
+      }
+    }
+
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.96);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 25px;
+    }
+
+    .lock-overlay.active {
+      display: flex;
+    }
+
+    .lock-icon {
+      font-size: 52px;
+      margin-bottom: 15px;
+    }
+
+    .lock-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .lock-text {
+      color: #777;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    .unlock-btn {
+      background: #222;
+      border: 1px solid #333;
+      color: white;
+      padding: 12px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .receiver-bottom {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: #333;
+      font-size: 10px;
+      pointer-events: none;
+    }
+
+    /* =========================
+       CONNECTING
+    ========================= */
+
+    .connecting {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .connecting.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #222;
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 18px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .connecting-text {
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* =========================
+       ROOM CODE
+    ========================= */
+
+    .room-code {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #181818;
+      text-align: center;
+      display: none;
+    }
+
+    .room-code.visible {
+      display: block;
+    }
+
+    .room-code-label {
+      color: #777;
+      font-size: 10px;
+      margin-bottom: 7px;
+    }
+
+    .room-code-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 5px;
+    }
+
+    .room-code-hint {
+      color: #666;
+      font-size: 11px;
+      margin-top: 7px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       HOME SCREEN
+  ========================= -->
+
+  <div id="homeScreen" class="screen active">
+
+    <div class="title">Touch</div>
+
+    <div class="home-card">
+
+      <h2>Connect</h2>
+
+      <div class="field">
+        <label class="input-label">Room Code</label>
+        <input
+          id="roomInput"
+          type="text"
+          maxlength="6"
+          placeholder="Enter room code"
+          autocomplete="off"
+          autocapitalize="characters"
+        >
+      </div>
+
+      <div class="button-row">
+        <button id="createBtn" class="btn primary">
+          Create Room
+        </button>
+
+        <button id="joinBtn" class="btn">
+          Join Room
+        </button>
+      </div>
+
+      <div id="homeStatus" class="status">
+        Connecting...
+      </div>
+
+      <div id="roomCodeBox" class="room-code">
+        <div class="room-code-label">YOUR ROOM CODE</div>
+        <div id="roomCodeValue" class="room-code-value"></div>
+        <div class="room-code-hint">
+          Give this code to thea
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       CONTROLLER SCREEN
+  ========================= -->
+
+  <div id="controllerScreen" class="screen">
+
+    <canvas id="controllerCanvas"></canvas>
+
+    <div class="controller-top">
+
+      <div id="controllerConnection" class="connection-pill">
+        ● CONNECTING
+      </div>
+
+      <div id="controllerRoom" class="connection-pill">
+        ROOM ------
+      </div>
+
+    </div>
+
+    <div id="fingerInfo" class="finger-info">
+      Intensity: 0%
+    </div>
+
+    <div class="controller-controls">
+
+      <select id="modeSelect" class="mode-select">
+        <option value="continuous">Continuous</option>
+        <option value="pulse">Pulse / Heartbeat</option>
+      </select>
+
+      <button id="heartBtn" class="heart-btn">
+        ♥
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       RECEIVER SCREEN
+  ========================= -->
+
+  <div id="receiverScreen" class="screen">
+
+    <div id="receiverStatus" class="receiver-status">
+      ● HAPTICS READY
+    </div>
+
+    <div id="receiverHeart" class="receiver-heart">
+      ♥
+    </div>
+
+    <div class="receiver-bottom">
+      RECEIVER
+    </div>
+
+    <div id="lockOverlay" class="lock-overlay">
+
+      <div class="lock-icon">🔒</div>
+
+      <div class="lock-title">
+        Touch Locked
+      </div>
+
+      <div class="lock-text">
+        The receiver screen is locked so accidental touches
+        won't interfere with the connection.
+      </div>
+
+      <button id="unlockBtn" class="unlock-btn">
+        Hold to Unlock
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       CONNECTING OVERLAY
+  ========================= -->
+
+  <div id="connectingOverlay" class="connecting">
+
+    <div class="spinner"></div>
+
+    <div id="connectingText" class="connecting-text">
+      Connecting...
+    </div>
+
+  </div>
+
+
+<script>
+
+let socket = null;
+
+let role = null;
+let roomCode = null;
+
+let shouldReconnect = false;
+let reconnectTimer = null;
+
+let pendingAction = null;
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const homeScreen = document.getElementById("homeScreen");
+const controllerScreen = document.getElementById("controllerScreen");
+const receiverScreen = document.getElementById("receiverScreen");
+
+const roomInput = document.getElementById("roomInput");
+
+const createBtn = document.getElementById("createBtn");
+const joinBtn = document.getElementById("joinBtn");
+
+const homeStatus = document.getElementById("homeStatus");
+
+const roomCodeBox = document.getElementById("roomCodeBox");
+const roomCodeValue = document.getElementById("roomCodeValue");
+
+const controllerCanvas =
+  document.getElementById("controllerCanvas");
+
+const controllerConnection =
+  document.getElementById("controllerConnection");
+
+const controllerRoom =
+  document.getElementById("controllerRoom");
+
+const fingerInfo =
+  document.getElementById("fingerInfo");
+
+const modeSelect =
+  document.getElementById("modeSelect");
+
+const heartBtn =
+  document.getElementById("heartBtn");
+
+const receiverStatus =
+  document.getElementById("receiverStatus");
+
+const receiverHeart =
+  document.getElementById("receiverHeart");
+
+const lockOverlay =
+  document.getElementById("lockOverlay");
+
+const unlockBtn =
+  document.getElementById("unlockBtn");
+
+const connectingOverlay =
+  document.getElementById("connectingOverlay");
+
+const connectingText =
+  document.getElementById("connectingText");
+
+
+/* =========================
+   CANVAS
+========================= */
+
+const ctx = controllerCanvas.getContext("2d");
+
+let drawing = false;
+
+let lastX = 0;
+let lastY = 0;
+
+let canvasWidth = 0;
+let canvasHeight = 0;
+
+
+/* =========================
+   HAPTIC STATE
+========================= */
+
+let currentPattern = "continuous";
+
+let targetIntensity = 0;
+
+let pulseTimer = null;
+let continuousTimer = null;
+
+let hapticsRunning = false;
+
+
+/* =========================
+   RECEIVER HAPTIC ARMING
+========================= */
+
+let hapticsArmed = false;
+
+let wakeLock = null;
+
+function showScreen(screen) {
+
+  homeScreen.classList.remove("active");
+  controllerScreen.classList.remove("active");
+  receiverScreen.classList.remove("active");
+
+  screen.classList.add("active");
+
+}
+
+
+function showConnecting(text) {
+
+  connectingText.textContent = text;
+  connectingOverlay.classList.add("active");
+
+}
+
+
+function hideConnecting() {
+
+  connectingOverlay.classList.remove("active");
+
+}
+
+function getWebSocketURL() {
+
+  const protocol =
+    location.protocol === "https:"
+      ? "wss:"
+      : "ws:";
+
+  return protocol + "//" + location.host;
+
+}
+
+
+function connectSocket() {
+
+  if (
+    socket &&
+    (
+      socket.readyState === WebSocket.OPEN ||
+      socket.readyState === WebSocket.CONNECTING
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  socket = new WebSocket(
+    getWebSocketURL()
+  );
+
+
+  socket.addEventListener("open", () => {
+
+    homeStatus.textContent =
+      "Connected to server.";
+
+
+    /*
+       If we already have an established room,
+       reconnect using the saved role and room.
+
+       If there is a pending create/join action,
+       perform that action instead.
+    */
+
+    if (
+      pendingAction
+    ) {
+
+      const action =
+        pendingAction;
+
+      pendingAction = null;
+
+
+      if (
+        action.type === "create"
+      ) {
+
+        socket.send(
+          JSON.stringify({
+            type: "create"
+          })
+        );
+
+      }
+
+
+      else if (
+        action.type === "join"
+      ) {
+
+        socket.send(
+          JSON.stringify({
+            type: "join",
+            code: action.code
+          })
+        );
+
+      }
+
+
+      return;
+
+    }
+
+
+    /*
+       Automatic reconnection.
+    */
+
+    if (
+      role &&
+      roomCode
+    ) {
+
+      socket.send(
+        JSON.stringify({
+
+          type: "reconnect",
+
+          room: roomCode,
+
+          role: role
+
+        })
+      );
+
+    }
+
+  });
+
+
+  socket.addEventListener("message", event => {
+
+    let message;
+
+    try {
+
+      message =
+        JSON.parse(event.data);
+
+    }
+
+    catch {
+
+      return;
+
+    }
+
+
+    handleMessage(message);
+
+  });
+
+
+  socket.addEventListener("close", () => {
+
+    socket = null;
+
+
+    if (
+      role === "A"
+    ) {
+
+      controllerConnection.textContent =
+        "● DISCONNECTED";
+
+      controllerConnection.classList.remove(
+        "connected"
+      );
+
+    }
+
+
+    if (
+      role === "B"
+    ) {
+
+      receiverStatus.textContent =
+        "● RECONNECTING...";
+
+      stopVibration();
+
+    }
+
+
+    if (
+      shouldReconnect
+    ) {
+
+      scheduleReconnect();
+
+    }
+
+  });
+
+
+  socket.addEventListener("error", () => {
+
+    homeStatus.textContent =
+      "Connection error.";
+
+  });
+
+}
+
+
+function scheduleReconnect() {
+
+  if (
+    reconnectTimer
+  ) {
+
+    return;
+
+  }
+
+
+  reconnectTimer =
+    setTimeout(() => {
+
+      reconnectTimer = null;
+
+      connectSocket();
+
+    }, 1500);
+
+}
+
+function handleMessage(message) {
+
+  switch (message.type) {
+
+    case "room-created": {
+
+      role = "A";
+
+      roomCode =
+        String(
+          message.code || ""
+        ).toUpperCase();
+
+
+      shouldReconnect = true;
+
+
+      roomCodeValue.textContent =
+        roomCode;
+
+      roomCodeBox.classList.add(
+        "visible"
+      );
+
+
+      homeStatus.textContent =
+        "Waiting for thea ...";
+
+        break;
+
+    }
+
+    case "joined": {
+
+      role = "B";
+
+      roomCode =
+        String(
+          message.code || ""
+        ).toUpperCase();
+
+
+      shouldReconnect = true;
+
+
+      homeStatus.textContent =
+        "Joined room.";
+
+
+      showScreen(
+        receiverScreen
+      );
+
+
+      initializeReceiverLock();
+
+      requestWakeLock();
+
+
+      break;
+
+    }
+
+
+    /* ==================================
+       PARTNER JOINED
+    ================================== */
+
+    case "partner-joined": {
+
+      if (
+        role === "A"
+      ) {
+
+        homeStatus.textContent =
+          "thea connected.";
+
+        showConnected();
+
+      }
+
+      break;
+
+    }
+
+
+    /* ==================================
+       PARTNER READY
+    ================================== */
+
+    case "partner-ready": {
+
+      if (
+        role === "A"
+      ) {
+
+        showConnected();
+
+      }
+
+      break;
+
+    }
+
+
+    /* ==================================
+       CONTROL
+    ================================== */
+
+    case "control": {
+
+      if (
+        role === "B"
+      ) {
+
+        receiveControl(
+          message
+        );
+
+      }
+
+      break;
+
+    }
+
+case "stop": {
+
+  if (
+    role === "B"
+  ) {
+
+    targetIntensity = 0;
+
+    stopVibration();
+
+  }
+
+  break;
+
+}
+
+    case "heart": {
+
+      if (
+        role === "B"
+      ) {
+
+        receiveHeart();
+
+      }
+
+      break;
+
+    }
+
+
+    /* ==================================
+       PARTNER LEFT
+    ================================== */
+
+    case "partner-left": {
+
+      if (
+        role === "B"
+      ) {
+
+        stopVibration();
+
+        receiverStatus.textContent =
+          "● PARTNER DISCONNECTED";
+
+      }
+
+
+      if (
+        role === "A"
+      ) {
+
+        controllerConnection.textContent =
+          "● PARTNER DISCONNECTED";
+
+        controllerConnection.classList.remove(
+          "connected"
+        );
+
+      }
+
+      break;
+
+    }
+
+
+    /* ==================================
+       RECONNECTED
+    ================================== */
+
+    case "reconnected": {
+
+      /*
+         Server sends "code".
+      */
+
+      if (
+        message.code
+      ) {
+
+        roomCode =
+          String(
+            message.code
+          ).toUpperCase();
+
+      }
+
+
+      showConnected();
+
+      break;
+
+    }
+
+
+    /* ==================================
+       ERROR
+    ================================== */
+
+    case "error": {
+
+      homeStatus.textContent =
+        message.message ||
+        "Something went wrong.";
+
+      hideConnecting();
+
+      /*
+         Important:
+         Don't leave fake B state after
+         a failed join.
+      */
+
+      if (
+        !controllerScreen.classList.contains("active") &&
+        !receiverScreen.classList.contains("active")
+      ) {
+
+        role = null;
+        roomCode = null;
+        shouldReconnect = false;
+
+      }
+
+      break;
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   ROOM CREATION / JOINING
+========================================================= */
+
+createBtn.addEventListener(
+  "click",
+  () => {
+
+    /*
+       If socket is already connected,
+       create immediately.
+
+       Otherwise remember the action and
+       send it as soon as connection opens.
+    */
+
+    pendingAction = {
+      type: "create"
+    };
+
+
+    homeStatus.textContent =
+      "Creating room...";
+
+
+    connectSocket();
+
+  }
+);
+
+
+joinBtn.addEventListener(
+  "click",
+  () => {
+
+    const code =
+      roomInput.value
+        .trim()
+        .toUpperCase();
+
+
+    if (
+      !code
+    ) {
+
+      homeStatus.textContent =
+        "Enter a room code first.";
+
+      return;
+
+    }
+
+
+    /*
+       DO NOT set role or roomCode here.
+
+       They are only set after the server
+       confirms the join.
+
+       This prevents the join request from
+       accidentally becoming a reconnect.
+    */
+
+    pendingAction = {
+
+      type: "join",
+
+      code: code
+
+    };
+
+
+    homeStatus.textContent =
+      "Joining room...";
+
+
+    connectSocket();
+
+  }
+);
+
+
+roomInput.addEventListener(
+  "input",
+  () => {
+
+    roomInput.value =
+      roomInput.value
+        .replace(
+          /[^a-zA-Z0-9]/g,
+          ""
+        )
+        .toUpperCase();
+
+  }
+);
+
+
+/* =========================================================
+   CONNECTED UI
+========================================================= */
+
+function showConnected() {
+
+  hideConnecting();
+
+
+  if (
+    role === "A"
+  ) {
+
+    showScreen(
+      controllerScreen
+    );
+
+
+    controllerConnection.textContent =
+      "● CONNECTED";
+
+
+    controllerConnection.classList.add(
+      "connected"
+    );
+
+
+    controllerRoom.textContent =
+      "ROOM " + roomCode;
+
+
+    resizeCanvas();
+
+    requestWakeLock();
+
+  }
+
+
+  else if (
+    role === "B"
+  ) {
+
+    showScreen(
+      receiverScreen
+    );
+
+
+    receiverStatus.textContent =
+      "● HAPTICS READY";
+
+
+    initializeReceiverLock();
+
+    requestWakeLock();
+
+  }
+
+}
+
+
+/* =========================================================
+   CONTROLLER
+========================================================= */
+
+function resizeCanvas() {
+
+  canvasWidth =
+    window.innerWidth;
+
+  canvasHeight =
+    window.innerHeight;
+
+
+  const dpr =
+    Math.max(
+      1,
+      window.devicePixelRatio || 1
+    );
+
+
+  controllerCanvas.width =
+    canvasWidth * dpr;
+
+  controllerCanvas.height =
+    canvasHeight * dpr;
+
+
+  controllerCanvas.style.width =
+    canvasWidth + "px";
+
+  controllerCanvas.style.height =
+    canvasHeight + "px";
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+
+/* =========================================================
+   FINGER INTENSITY
+========================================================= */
+
+function getIntensity(y) {
+
+  if (
+    canvasHeight <= 0
+  ) {
+
+    return 0;
+
+  }
+
+
+  let intensity =
+    1 -
+    (
+      y /
+      canvasHeight
+    );
+
+
+  return Math.max(
+    0,
+    Math.min(
+      1,
+      intensity
+    )
+  );
+
+}
+
+
+/* =========================================================
+   DRAW FINGER
+========================================================= */
+
+function drawFinger(x, y) {
+
+  ctx.clearRect(
+    0,
+    0,
+    canvasWidth,
+    canvasHeight
+  );
+
+
+  if (
+    drawing
+  ) {
+
+    ctx.beginPath();
+
+
+    ctx.arc(
+      x,
+      y,
+      5,
+      0,
+      Math.PI * 2
+    );
+
+
+    ctx.fillStyle =
+      "#ff2b2b";
+
+
+    ctx.fill();
+
+  }
+
+}
+
+
+/* =========================================================
+   SEND CONTROL
+========================================================= */
+
+function sendControl(x, y) {
+
+  if (
+    !socket ||
+    socket.readyState !== WebSocket.OPEN
+  ) {
+
+    return;
+
+  }
+
+
+  const intensity =
+    getIntensity(y);
+
+
+  targetIntensity =
+    intensity;
+
+
+  fingerInfo.textContent =
+    "Intensity: " +
+    Math.round(
+      intensity * 100
+    ) +
+    "%";
+
+
+  socket.send(
+    JSON.stringify({
+
+      type: "control",
+
+      intensity: intensity,
+
+      pattern: currentPattern
+
+    })
+  );
+
+}
+
+function pointerDown(event) {
+
+  if (
+    event.pointerType === "mouse" &&
+    event.button !== 0
+  ) {
+
+    return;
+
+  }
+
+
+  drawing = true;
+
+
+  lastX =
+    event.clientX;
+
+  lastY =
+    event.clientY;
+
+
+  try {
+
+    controllerCanvas.setPointerCapture(
+      event.pointerId
+    );
+
+  }
+
+  catch {}
+
+
+  drawFinger(
+    lastX,
+    lastY
+  );
+
+
+  sendControl(
+    lastX,
+    lastY
+  );
+
+}
+
+
+function pointerMove(event) {
+
+  if (
+    !drawing
+  ) {
+
+    return;
+
+  }
+
+
+  lastX =
+    event.clientX;
+
+  lastY =
+    event.clientY;
+
+
+  drawFinger(
+    lastX,
+    lastY
+  );
+
+
+  sendControl(
+    lastX,
+    lastY
+  );
+
+}
+
+
+function pointerUp() {
+
+  if (
+    !drawing
+  ) {
+
+    return;
+
+  }
+
+
+  drawing = false;
+
+
+  ctx.clearRect(
+    0,
+    0,
+    canvasWidth,
+    canvasHeight
+  );
+
+
+  targetIntensity = 0;
+
+
+  if (
+    socket &&
+    socket.readyState === WebSocket.OPEN
+  ) {
+
+    /*
+       Send zero intensity as a fallback.
+    */
+
+    socket.send(
+      JSON.stringify({
+
+        type: "control",
+
+        intensity: 0,
+
+        pattern: currentPattern
+
+      })
+    );
+
+
+    /*
+       Explicitly tell the receiver
+       to stop immediately.
+    */
+
+    socket.send(
+      JSON.stringify({
+
+        type: "stop"
+
+      })
+    );
+
+  }
+
+
+  fingerInfo.textContent =
+    "Intensity: 0%";
+
+}
+
+controllerCanvas.addEventListener(
+  "pointerdown",
+  pointerDown
+);
+
+controllerCanvas.addEventListener(
+  "pointermove",
+  pointerMove
+);
+
+controllerCanvas.addEventListener(
+  "pointerup",
+  pointerUp
+);
+
+controllerCanvas.addEventListener(
+  "pointercancel",
+  pointerUp
+);
+
+controllerCanvas.addEventListener(
+  "pointerleave",
+  event => {
+
+    if (
+      event.pointerType === "mouse"
+    ) {
+
+      pointerUp();
+
+    }
+
+  }
+);
+
+modeSelect.addEventListener(
+  "change",
+  () => {
+
+    currentPattern =
+      modeSelect.value;
+
+
+    if (
+      socket &&
+      socket.readyState === WebSocket.OPEN
+    ) {
+
+      socket.send(
+        JSON.stringify({
+
+          type: "control",
+
+          intensity:
+            targetIntensity,
+
+          pattern:
+            currentPattern
+
+        })
+      );
+
+    }
+
+  }
+);
+
+heartBtn.addEventListener(
+  "click",
+  () => {
+
+    if (
+      !socket ||
+      socket.readyState !== WebSocket.OPEN
+    ) {
+
+      return;
+
+    }
+
+
+    socket.send(
+      JSON.stringify({
+
+        type: "heart"
+
+      })
+    );
+
+  }
+);
+
+function clamp(
+  value,
+  min,
+  max
+) {
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+function stopVibration() {
+
+  clearTimeout(pulseTimer);
+  clearTimeout(continuousTimer);
+
+  pulseTimer = null;
+  continuousTimer = null;
+
+  hapticsRunning = false;
+
+  if ("vibrate" in navigator) {
+
+    /*
+       Cancel any active vibration immediately.
+    */
+
+    navigator.vibrate(0);
+
+    /*
+       Some browsers/devices respond more reliably
+       when cancellation is explicitly repeated.
+    */
+
+    setTimeout(() => {
+
+      if (!hapticsRunning && targetIntensity <= 0.01) {
+
+        navigator.vibrate(0);
+
+      }
+
+    }, 20);
+
+  }
+
+}
+
+function startContinuousVibration() {
+
+  clearTimeout(continuousTimer);
+
+  if (targetIntensity <= 0.01) {
+
+    stopVibration();
+    return;
+
+  }
+
+  hapticsRunning = true;
+
+  const intensity =
+    clamp(
+      targetIntensity,
+      0,
+      1
+    );
+
+  /*
+     Browser vibration has no true amplitude control,
+     so Continuous intensity is simulated through
+     vibration duration.
+
+     TOP    = long/strong
+     MIDDLE = medium
+     BOTTOM = very short/weak
+  */
+
+  let vibrationDuration;
+
+  if (intensity >= 0.75) {
+
+    vibrationDuration = 1000;
+
+  }
+
+  else if (intensity >= 0.50) {
+
+    vibrationDuration = 650;
+
+  }
+
+  else if (intensity >= 0.25) {
+
+    vibrationDuration = 350;
+
+  }
+
+  else {
+
+    vibrationDuration = 120;
+
+  }
+
+
+  if ("vibrate" in navigator) {
+
+    navigator.vibrate(
+      vibrationDuration
+    );
+
+  }
+
+
+  /*
+     Refresh before the vibration ends.
+     This also checks the newest finger position.
+  */
+
+  const refreshTime =
+    Math.max(
+      80,
+      vibrationDuration - 80
+    );
+
+
+  continuousTimer =
+    setTimeout(() => {
+
+      if (
+        currentPattern === "continuous" &&
+        targetIntensity > 0.01
+      ) {
+
+        startContinuousVibration();
+
+      }
+
+      else {
+
+        stopVibration();
+
+      }
+
+    }, refreshTime);
+
+}
+
+function startPulseVibration() {
+
+  clearTimeout(
+    pulseTimer
+  );
+
+
+  if (
+    targetIntensity <= 0.01
+  ) {
+
+    stopVibration();
+
+    return;
+
+  }
+
+
+  hapticsRunning = true;
+
+
+  const intensity =
+    clamp(
+      targetIntensity,
+      0,
+      1
+    );
+
+
+  /*
+     BIG BEAT
+  */
+
+  const firstBeat =
+    Math.round(
+      70 +
+      intensity * 80
+    );
+
+
+  /*
+     Short pause
+  */
+
+  const shortPause =
+    75;
+
+
+  /*
+     SMALL BEAT
+  */
+
+  const secondBeat =
+    Math.round(
+      35 +
+      intensity * 45
+    );
+
+
+  /*
+     Long heartbeat pause
+  */
+
+  const longPause =
+    430;
+
+
+  const pattern = [
+
+    firstBeat,
+
+    shortPause,
+
+    secondBeat,
+
+    longPause
+
+  ];
+
+
+  if (
+    "vibrate" in navigator
+  ) {
+
+    navigator.vibrate(
+      pattern
+    );
+
+  }
+
+
+  const totalDuration =
+    firstBeat +
+    shortPause +
+    secondBeat +
+    longPause;
+
+
+  pulseTimer =
+    setTimeout(
+      () => {
+
+        if (
+          currentPattern ===
+            "pulse" &&
+          targetIntensity > 0.01
+        ) {
+
+          startPulseVibration();
+
+        }
+
+        else if (
+          currentPattern ===
+            "continuous" &&
+          targetIntensity > 0.01
+        ) {
+
+          startContinuousVibration();
+
+        }
+
+        else {
+
+          stopVibration();
+
+        }
+
+      },
+      totalDuration
+    );
+
+}
+
+function receiveControl(message) {
+
+  const newIntensity =
+    clamp(
+      Number(message.intensity) || 0,
+      0,
+      1
+    );
+
+  const previousIntensity =
+    targetIntensity;
+
+
+  targetIntensity =
+    newIntensity;
+
+
+  /*
+     Update mode immediately.
+  */
+
+  if (message.pattern) {
+
+    const newPattern =
+      message.pattern === "pulse"
+        ? "pulse"
+        : "continuous";
+
+
+    if (newPattern !== currentPattern) {
+
+      currentPattern =
+        newPattern;
+
+      stopVibration();
+
+    }
+
+  }
+
+
+  /*
+     FINGER LIFTED / BOTTOM
+  */
+
+  if (targetIntensity <= 0.01) {
+
+    stopVibration();
+
+    return;
+
+  }
+
+
+  /*
+     CONTINUOUS
+
+     Restart when the finger moves enough
+     to change the vibration intensity.
+  */
+
+  if (
+    currentPattern === "continuous"
+  ) {
+
+    const intensityChanged =
+      Math.abs(
+        targetIntensity -
+        previousIntensity
+      ) >= 0.02;
+
+
+    if (
+      !hapticsRunning ||
+      intensityChanged
+    ) {
+
+      startContinuousVibration();
+
+    }
+
+    return;
+
+  }
+
+
+  /*
+     PULSE / HEARTBEAT
+  */
+
+  if (
+    !hapticsRunning
+  ) {
+
+    startPulseVibration();
+
+  }
+
+}
+
+function receiveHeart() {
+
+  receiverHeart.classList.remove(
+    "show"
+  );
+
+
+  void receiverHeart.offsetWidth;
+
+
+  receiverHeart.classList.add(
+    "show"
+  );
+
+
+  if (
+    "vibrate" in navigator
+  ) {
+
+    navigator.vibrate([
+
+      80,
+      70,
+      120,
+      180,
+      80
+
+    ]);
+
+  }
+
+}
+
+function armHaptics() {
+
+  if (
+    hapticsArmed
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    "vibrate" in navigator
+  ) {
+
+    navigator.vibrate(1);
+
+    navigator.vibrate(0);
+
+  }
+
+
+  hapticsArmed = true;
+
+
+  receiverStatus.textContent =
+    "● HAPTICS READY";
+
+}
+
+
+receiverScreen.addEventListener(
+  "pointerdown",
+  armHaptics
+);
+
+let unlockTimer = null;
+
+
+function toggleLock() {
+
+  lockOverlay.classList.add(
+    "active"
+  );
+
+}
+
+
+function startUnlock() {
+
+  clearTimeout(
+    unlockTimer
+  );
+
+
+  unlockBtn.textContent =
+    "Keep holding...";
+
+
+  unlockTimer =
+    setTimeout(
+      () => {
+
+        lockOverlay.classList.remove(
+          "active"
+        );
+
+
+        unlockBtn.textContent =
+          "Hold to Unlock";
+
+      },
+      1500
+    );
+
+}
+
+
+function cancelUnlock() {
+
+  clearTimeout(
+    unlockTimer
+  );
+
+
+  unlockBtn.textContent =
+    "Hold to Unlock";
+
+}
+
+
+unlockBtn.addEventListener(
+  "pointerdown",
+  startUnlock
+);
+
+unlockBtn.addEventListener(
+  "pointerup",
+  cancelUnlock
+);
+
+unlockBtn.addEventListener(
+  "pointercancel",
+  cancelUnlock
+);
+
+unlockBtn.addEventListener(
+  "pointerleave",
+  cancelUnlock
+);
+
+function initializeReceiverLock() {
+
+  lockOverlay.classList.add(
+    "active"
+  );
+
+}
+
+
+receiverScreen.addEventListener(
+  "touchmove",
+  event => {
+
+    if (
+      lockOverlay.classList.contains(
+        "active"
+      )
+    ) {
+
+      event.preventDefault();
+
+    }
+
+  },
+  {
+    passive: false
+  }
+);
+
+async function requestWakeLock() {
+
+  try {
+
+    if (
+      "wakeLock" in navigator
+    ) {
+
+      wakeLock =
+        await navigator.wakeLock.request(
+          "screen"
+        );
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.log(
+      "Wake lock unavailable:",
+      error
+    );
+
+  }
+
+}
+
+
+document.addEventListener(
+  "visibilitychange",
+  async () => {
+
+    if (
+      document.visibilityState ===
+        "visible" &&
+      role
+    ) {
+
+      await requestWakeLock();
+
+    }
+
+  }
+);
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+
+    shouldReconnect = false;
+
+
+    clearTimeout(
+      reconnectTimer
+    );
+
+
+    stopVibration();
+
+
+    if (
+      socket
+    ) {
+
+      socket.close();
+
+    }
+
+  }
+);
+
+currentPattern =
+  "continuous";
+
+
+modeSelect.value =
+  "continuous";
+
+
+resizeCanvas();
+
+/*
+   We intentionally DO NOT connect here.
+
+   The socket is opened when the user presses
+   Create Room or Join Room.
+*/
+
+</script>
+
+</body>
+</html>
