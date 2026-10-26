@@ -1676,6 +1676,35 @@ updateChatAvailability();
 currentPattern = "continuous";
 modeSelect.value = "continuous";
 resizeCanvas();
+
+/* Remove unwanted chat shortcuts and the "Just Us" label */
+function removeUnwantedChatElements() {
+  document.querySelectorAll(
+    "#privateChat button, #privateChat a, #privateChat [role='button']"
+  ).forEach(element => {
+    const label = (element.innerText || element.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (/^(❤️?\s*)?(miss you|kiss|hug|heartbeat)(\s*❤️?)?$/i.test(label)) {
+      element.remove();
+    }
+  });
+
+  document.querySelectorAll(
+    "#privateChat h1, #privateChat h2, #privateChat h3, #privateChat h4, #privateChat p, #privateChat span, #privateChat div"
+  ).forEach(element => {
+    if (
+      element.children.length === 0 &&
+      /^just us[.!❤️💕\s]*$/i.test(element.textContent.trim())
+    ) {
+      element.remove();
+    }
+  });
+}
+
+removeUnwantedChatElements();
+
 </script>
 </body>
 </html>

@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 const RECONNECT_TIME = 30000;
 const MAX_MESSAGE_LENGTH = 1200;
 const MAX_VOICE_DATA_LENGTH = 450000;
-const MAX_PAYLOAD = 600 * 1024;
+const MAX_PAYLOAD = 8 * 1024 * 1024
 
 const BASE_DIR = path.resolve(__dirname);
 
