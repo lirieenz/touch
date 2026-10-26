@@ -175,7 +175,7 @@ function handleChatMessage(socket, message) {
 
     outgoing = {
       type: "chat-message",
-      from: socket.partner === "A" ? "Partner A" : "Partner B",
+      from: socket.partner === "A" ? "benz :p" : "thea :p",
       text
     };
   } else if (message.type === "chat-signal") {
@@ -190,7 +190,7 @@ function handleChatMessage(socket, message) {
 
     outgoing = {
       type: "chat-signal",
-      from: socket.partner === "A" ? "Partner A" : "Partner B",
+      from: socket.partner === "A" ? "benz :p" : "thea :p",
       signal: message.signal
     };
   } else if (message.type === "voice-note") {
@@ -210,7 +210,7 @@ function handleChatMessage(socket, message) {
 
     outgoing = {
       type: "voice-note",
-      from: socket.partner === "A" ? "Partner A" : "Partner B",
+      from: socket.partner === "A" ? "benz :p" : "thea :p",
       data: message.data,
       mime,
       duration: Math.min(
