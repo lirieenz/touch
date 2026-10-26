@@ -708,6 +708,15 @@ function updateChatAvailability() {
       ? "Room " + roomCode + " · connected"
       : "Room " + roomCode + " · reconnecting";
 }
+function debugRoomConnection() {
+  console.log({
+    socketState: socket?.readyState,
+    socketOpen: socket?.readyState === WebSocket.OPEN,
+    role,
+    roomCode,
+    chatConnected: chatIsConnected()
+  });
+}
 function setChatStatus(text) {
   chatStatus.textContent = text || "";
 }
