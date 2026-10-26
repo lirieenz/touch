@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#FAD2D2">
 <title></title>
 
 <style>
@@ -17,8 +17,8 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #000;
-  color: #fff;
+  background: #E6F6FA;
+  color: #563D48;
   font-family: Arial, Helvetica, sans-serif;
 }
 body { touch-action: none; }
@@ -253,8 +253,8 @@ button { cursor: pointer; }
 }
 .home-card {
   width: min(420px, 100%);
-  background: #111;
-  border: 1px solid #222;
+  background: #F8FEFF;
+  border: 1px solid #D3EAF0;
   border-radius: 18px;
   padding: 25px;
 }
@@ -262,15 +262,15 @@ button { cursor: pointer; }
 .input-label {
   display: block;
   font-size: 12px;
-  color: #999;
+  color: #8B7380;
   margin-bottom: 7px;
 }
 input, select {
   width: 100%;
   height: 48px;
-  background: #181818;
-  color: #fff;
-  border: 1px solid #333;
+  background: #fff;
+  color: #563D48;
+  border: 1px solid #D4E7EB;
   border-radius: 10px;
   padding: 0 14px;
   outline: none;
@@ -278,16 +278,16 @@ input, select {
 input:focus, select:focus { border-color: #666; }
 .field { margin-bottom: 15px; }
 .button-row { display: flex; gap: 10px; margin-top: 18px; }
-.btn {
+ .btn {
   flex: 1;
   height: 48px;
-  border: none;
+  border: 1px solid #D4E7EB;
   border-radius: 10px;
   font-weight: 700;
-  color: #fff;
-  background: #222;
+  color: #416D7A;
+  background: #E6F6FA;
 }
-.btn.primary { background: #e50914; }
+.btn.primary { background: #FAD2D2; color: #754B5B; border-color: #E6B9C4; }
 .btn:active { transform: scale(.98); }
 .status {
   text-align: center;
@@ -310,7 +310,7 @@ input:focus, select:focus { border-color: #666; }
 .room-code-hint { color: #666; font-size: 11px; margin-top: 7px; }
 
 /* CONTROLLER */
-#controllerScreen { background: #000; flex-direction: column; }
+#controllerScreen { background: #E6F6FA; flex-direction: column; }
 #controllerCanvas {
   position: absolute;
   inset: 0;
@@ -373,7 +373,7 @@ input:focus, select:focus { border-color: #666; }
 
 /* RECEIVER */
 #receiverScreen {
-  background: #000;
+  background: #E6F6FA;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -497,8 +497,8 @@ input:focus, select:focus { border-color: #666; }
   display: none;
   flex-direction: column;
   overflow: hidden;
-  background: #090909;
-  border: 1px solid #292929;
+  background: #F8FEFF;
+  border: 1px solid #D3EAF0;
   border-radius: 18px;
   box-shadow: 0 12px 40px #000c;
   touch-action: auto;
@@ -702,6 +702,68 @@ input:focus, select:focus { border-color: #666; }
   }
   .companion-launcher { right: 12px; bottom: 12px; }
 }
+
+/* GAMES SIDEBAR */
+.games-launcher { position:fixed; z-index:70; left:16px; bottom:18px; min-height:52px; padding:0 16px; border:1px solid #E6B9C4; border-radius:999px; background:#FAD2D2; color:#754B5B; font-weight:800; box-shadow:0 6px 24px #9D718026; display:none; align-items:center; gap:8px; touch-action:manipulation; }
+.games-launcher.visible { display:flex; }
+.games-panel { position:fixed; z-index:85; left:12px; bottom:80px; width:min(390px,calc(100vw - 24px)); max-height:min(690px,calc(100dvh - 105px)); display:none; flex-direction:column; overflow:hidden; border:1px solid #D3EAF0; border-radius:20px; background:#F8FEFF; color:#563D48; box-shadow:0 12px 40px #6E92951f; touch-action:auto; }
+.games-panel.open { display:flex; }
+.games-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 15px 11px; background:#FAD2D2; }
+.games-title { font-weight:800; font-size:15px; color:#754B5B; }
+.games-subtitle { font-size:10px; margin-top:4px; color:#926D7B; }
+.game-close { width:32px;height:32px;border:1px solid #E6B9C4;border-radius:10px;background:#fff9;color:#754B5B; }
+.game-tabs { display:flex; gap:7px; padding:10px 12px 0; background:#F0FAFC; }
+.game-tab { flex:1; min-height:39px; padding:8px 9px; border:1px solid #D4E7EB; border-radius:11px 11px 0 0; background:#fff; color:#68828B; font-size:11px; font-weight:700; }
+.game-tab.active { background:#E6F6FA; border-color:#C7E4EB; color:#416D7A; }
+.game-content { padding:13px 14px 12px; overflow-y:auto; overscroll-behavior:contain; touch-action:pan-y; }
+.game-content[hidden], .quiz-form[hidden] { display:none!important; }
+.game-intro { margin:0 0 12px; color:#7C7B83; font-size:11px; line-height:1.5; }
+.game-label { display:block; margin:10px 0 5px; color:#8B7380; font-size:10px; font-weight:700; }
+.game-choice { display:flex; align-items:flex-start; gap:8px; margin:11px 0; color:#775F6A; font-size:11px; line-height:1.4; }
+.game-choice input { width:16px;height:16px;margin:0;accent-color:#B56E86; }
+.dare-card,.quiz-card { margin-top:12px;padding:17px 15px;border:1px solid #E6D2DB;border-radius:15px;background:linear-gradient(140deg,#FFF8FA,#E6F6FA); }
+.dare-tag { color:#B56E86;font-size:9px;letter-spacing:1.2px;font-weight:800;text-transform:uppercase; }
+.dare-prompt { margin-top:10px;color:#563D48;font-size:16px;font-weight:700;line-height:1.45;overflow-wrap:anywhere; }
+.dare-by { margin-top:12px;color:#8B8990;font-size:10px;line-height:1.4; }
+.game-actions { display:flex;gap:8px;margin-top:10px; }
+.game-primary,.game-secondary { min-height:42px;padding:10px 12px;border-radius:11px;border:1px solid #E6B9C4;font-size:11px;font-weight:800; }
+.game-primary { flex:1;background:#FAD2D2;color:#754B5B; }
+.game-secondary { background:#E6F6FA;color:#416D7A;border-color:#CDE9EF; }
+.game-status { min-height:14px;margin-top:8px;color:#9D6379;font-size:10px;line-height:1.4; }
+.quiz-score { display:flex;gap:8px;margin:8px 0; }
+.quiz-score>div { flex:1;display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid #D4E7EB;border-radius:11px;background:#fff;color:#789098;font-size:11px; }
+.quiz-score strong { color:#B56E86;font-size:18px; }
+.quiz-result { margin-top:10px;font-size:11px;line-height:1.5;color:#66818A;overflow-wrap:anywhere; }
+.quiz-form { margin-top:10px; }
+.quiz-form input { height:41px;font-size:12px; }
+.games-footnote { flex-shrink:0;padding:9px 13px 11px;border-top:1px solid #D7EBEF;background:#F0FAFC;color:#8B9DA2;font-size:9px;line-height:1.4; }
+#connectingOverlay { background:#E6F6FA; }
+@media(max-width:420px){ .games-launcher{left:12px;bottom:12px;height:48px}.games-panel{left:8px;bottom:70px;width:calc(100vw - 16px);max-height:calc(100dvh - 90px)}.game-content{padding:11px}.dare-prompt{font-size:15px} }
+
+
+/* Shared site palette for connection controls and private chat */
+.room-code,.connection-pill,.mode-select,.heart-btn { background:#E6F6FA; color:#416D7A; border:1px solid #CDE9EF; }
+.room-code-label,.room-code-hint,.finger-info,.receiver-status,.receiver-bottom { color:#789098; }
+.connection-pill.connected { color:#416D7A; }
+.companion-launcher { background:#FAD2D2; border-color:#E6B9C4; color:#754B5B; box-shadow:0 6px 24px #9D718026; }
+.companion-header,.chat-composer,.chat-status,.chat-footnote { background:#F0FAFC; border-color:#D7EBEF; }
+.companion-heading { color:#754B5B; }
+.companion-subheading,.chat-empty,.chat-footnote,.chat-meta { color:#789098; }
+.chat-tool,.chat-input,.chat-record,.chat-attach { background:#fff; border-color:#D4E7EB; color:#416D7A; }
+.chat-send { background:#FAD2D2; color:#754B5B; }
+.chat-record.recording { background:#FAD2D2; }
+.chat-bubble { background:#E6F6FA; border-color:#CDE9EF; color:#416D7A; }
+.chat-bubble.mine { background:#FFF0F1; border-color:#E6D2DB; color:#563D48; }
+.chat-input { color:#563D48; }
+.chat-input:focus { border-color:#B56E86; }
+.chat-status { color:#9D6379; }
+.chat-tool.danger { color:#B56E86; }
+.media-attachment,.mine .media-attachment { background:#E6F6FA; border-color:#CDE9EF; color:#416D7A; }
+.media-preview-close { background:#FAD2D2; border-color:#E6B9C4; color:#754B5B; }
+.lock-overlay { background:rgba(230,246,250,.97); color:#563D48; }
+.lock-text { color:#789098; }
+.unlock-btn { background:#FAD2D2; border-color:#E6B9C4; color:#754B5B; }
+
 </style>
 </head>
 
@@ -754,6 +816,25 @@ input:focus, select:focus { border-color: #666; }
     <button id="unlockBtn" class="unlock-btn" type="button">Hold to Unlock</button>
   </div>
 </div>
+
+<button id="gamesLauncher" class="games-launcher" type="button" aria-expanded="false" aria-controls="gamesPanel">🎲 Games</button>
+<section id="gamesPanel" class="games-panel" aria-label="Couples games">
+ <div class="games-header"><div><div class="games-title">A little us time 💗</div><div class="games-subtitle">Play together in your room</div></div><button id="gameClose" class="game-close" type="button" aria-label="Close games">✕</button></div>
+ <div class="game-tabs" role="tablist"><button class="game-tab active" id="dareTab" role="tab" aria-selected="true" type="button">Dare Me</button><button class="game-tab" id="quizTab" role="tab" aria-selected="false" type="button">How Well Do You Know Me</button></div>
+ <div id="dareContent" class="game-content"><p class="game-intro">Take turns choosing a playful dare, romantic question, or flirty challenge. Either of you can skip any prompt.</p>
+  <label class="game-label" for="dareMode">Choose your mood</label><select id="dareMode" class="game-select"><option value="mix">A little bit of everything</option><option value="playful">Playful dares</option><option value="romantic">Romantic questions</option><option value="flirty">Flirty challenges</option></select>
+  <label class="game-choice"><input id="adultMode" type="checkbox"><span>Include spicy / naughty 18+ prompts (both players must opt in)</span></label>
+  <div class="dare-card"><div id="dareTag" class="dare-tag">Ready when you are</div><div id="darePrompt" class="dare-prompt">Pick a mood, then tap “Draw a prompt”.</div><div id="dareBy" class="dare-by">Skipping is always okay. No explanation needed.</div></div>
+  <div class="game-actions"><button id="drawDare" class="game-primary" type="button">Draw a prompt</button><button id="skipDare" class="game-secondary" type="button">Skip</button></div><div id="dareStatus" class="game-status" aria-live="polite"></div>
+ </div>
+ <div id="quizContent" class="game-content" hidden><p class="game-intro">Take turns answering questions about each other. Share your answer, then reveal it and see how well you know one another.</p>
+  <div class="quiz-score"><div>You <strong id="myScore">0</strong></div><div>Partner <strong id="partnerScore">0</strong></div></div>
+  <div class="quiz-card"><div class="dare-tag">QUESTION</div><div id="quizQuestion" class="dare-prompt">Tap below to get your first question.</div><div id="quizAnswer" class="quiz-result"></div></div>
+  <form id="quizForm" class="quiz-form"><label class="game-label" for="quizGuess">Your guess about your partner</label><input id="quizGuess" maxlength="240" placeholder="Type your answer..." autocomplete="off"><div class="game-actions"><button class="game-primary" type="submit">Share answer</button><button id="revealQuiz" class="game-secondary" type="button">Reveal</button></div></form>
+  <div class="game-actions"><button id="nextQuiz" class="game-primary" type="button">New question</button></div><div id="quizStatus" class="game-status" aria-live="polite"></div>
+ </div>
+ <div class="games-footnote">You can pass or stop anytime. 18+ prompts appear only after both players opt in.</div>
+</section>
 
 <button id="companionLauncher" class="companion-launcher" type="button" aria-label="Open private chat">♡</button>
 
@@ -838,6 +919,37 @@ const unlockBtn = $("unlockBtn");
 const connectingOverlay = $("connectingOverlay");
 const connectingText = $("connectingText");
 
+const gamesLauncher = $("gamesLauncher");
+const gamesPanel = $("gamesPanel");
+const gameClose = $("gameClose");
+const dareTab = $("dareTab");
+const quizTab = $("quizTab");
+const dareContent = $("dareContent");
+const quizContent = $("quizContent");
+const dareMode = $("dareMode");
+const adultMode = $("adultMode");
+const dareTag = $("dareTag");
+const darePrompt = $("darePrompt");
+const dareBy = $("dareBy");
+const dareStatus = $("dareStatus");
+const quizQuestion = $("quizQuestion");
+const quizAnswer = $("quizAnswer");
+const quizGuess = $("quizGuess");
+const quizForm = $("quizForm");
+const quizStatus = $("quizStatus");
+let gameScores = { A: 0, B: 0 };
+let quizRevealed = false;
+let quizAnswerValue = "";
+let quizAnswerBy = null;
+let adultConsent = { A: false, B: false };
+let nextDareRole = "A";
+const darePrompts = {
+ playful: ["Do your best impression of how your partner flirts with you.","Give your partner a silly, affectionate nickname and use it for the next round.","Recreate your first impression of your partner in three words.","Let your partner pick a song for a 10-second dance break.","Tell your partner one thing they do that always makes you smile."],
+ romantic: ["What small moment with your partner would you happily relive?","Tell your partner something about them you appreciate but don't say often.","What does your ideal slow, cozy date together look like?","Share a song that reminds you of the two of you.","What was the first thing you found charming about your partner?"],
+ flirty: ["Give your partner a compliment that would make them blush.","Whisper a line you would use to ask your partner out again.","Hold eye contact for ten seconds, then say what you were thinking.","Describe your partner's most irresistible quality.","Send your partner a flirty voice note, even if you're sitting together."]
+};
+const adultPrompts = ["Share a grown-up fantasy you would feel comfortable exploring together.","Give your partner a slow, romantic kiss if you both want one.","Describe a flirty date-night idea you would both enjoy.","Tell your partner one thing that makes you feel desired.","Ask your partner what kind of affectionate touch they enjoy; listen and respect their answer."];
+const quizQuestions = ["What is one little thing that can instantly improve my day?","What would my perfect low-key weekend look like?","Which shared memory makes me laugh the most?","What food could I happily eat again and again?","What is something new I would love for us to try together?","What kind of affection makes me feel most loved?","What was my first impression of you?","If I could plan any date for us, what would I choose?","What is one goal I am excited about right now?","What song or movie do I always come back to?"];
 const companionLauncher = $("companionLauncher");
 const companionPanel = $("companionPanel");
 const chatConnectionLabel = $("chatConnectionLabel");
@@ -902,6 +1014,7 @@ function chatIsConnected() {
 function updateChatAvailability() {
   const ready = !!role && !!roomCode;
   companionLauncher.classList.toggle("visible", ready);
+  gamesLauncher.classList.toggle("visible", ready);
   chatConnectionLabel.textContent = !ready
     ? "Join a room to chat"
     : chatIsConnected()
@@ -1092,6 +1205,10 @@ function handleMessage(message) {
           name: String(message.name || "attachment").slice(0, 100)
         });
       }
+      break;
+
+    case "game-state":
+      gameStateReceived(message.state);
       break;
 
     case "chat-cleared":
@@ -1340,6 +1457,85 @@ async function requestWakeLock() {
 }
 document.addEventListener("visibilitychange", async () => {
   if (document.visibilityState === "visible" && role) await requestWakeLock();
+});
+
+
+/* COUPLES GAMES: room-synced prompts and answers */
+function gameSend(state) { if (chatIsConnected()) sendJson({ type: "game-state", state }); }
+function gameStateReceived(state) {
+  if (!state || typeof state !== "object") return;
+  if (state.kind === "adult-consent") {
+    adultConsent[state.by] = !!state.enabled;
+    dareStatus.textContent = adultConsent.A && adultConsent.B ? "You both opted in. 18+ prompts are available when you choose them." : state.enabled ? "Your partner has opted in too? Waiting for both yeses…" : "Your partner has turned off 18+ prompts.";
+  } else if (state.kind === "dare") {
+    if (state.nextRole === "A" || state.nextRole === "B") nextDareRole = state.nextRole;
+    dareTag.textContent = String(state.tag || "PROMPT").slice(0, 40);
+    darePrompt.textContent = String(state.prompt || "").slice(0, 500);
+    dareBy.textContent = String(state.by || "").slice(0, 100);
+    dareStatus.textContent = state.status === "skip" ? "Prompt skipped. Draw another whenever you like." : "";
+  } else if (state.kind === "quiz") {
+    quizQuestion.textContent = String(state.question || "").slice(0, 300);
+    quizAnswerValue = String(state.answer || "").slice(0, 240);
+    quizAnswerBy = state.by === "A" || state.by === "B" ? state.by : null;
+    quizAnswer.textContent = state.revealed ? "Guess: " + (quizAnswerValue || "No answer shared yet.") + (state.awarded ? " · Point awarded!" : "") : String(quizAnswerValue ? "Guess shared — reveal when you're ready." : "");
+    quizRevealed = !!state.revealed;
+    if (state.scores && Number.isFinite(state.scores.A) && Number.isFinite(state.scores.B)) gameScores = { A: state.scores.A, B: state.scores.B };
+    $("myScore").textContent = String(gameScores[role] || 0);
+    $("partnerScore").textContent = String(gameScores[role === "A" ? "B" : "A"] || 0);
+    quizStatus.textContent = "";
+  }
+}
+function selectGame(name) {
+  const isDare = name === "dare";
+  dareTab.classList.toggle("active", isDare); quizTab.classList.toggle("active", !isDare);
+  dareTab.setAttribute("aria-selected", String(isDare)); quizTab.setAttribute("aria-selected", String(!isDare));
+  dareContent.hidden = !isDare; quizContent.hidden = isDare;
+}
+gamesLauncher.addEventListener("click", () => { gamesPanel.classList.toggle("open"); gamesLauncher.setAttribute("aria-expanded", String(gamesPanel.classList.contains("open"))); });
+gameClose.addEventListener("click", () => { gamesPanel.classList.remove("open"); gamesLauncher.setAttribute("aria-expanded", "false"); });
+dareTab.addEventListener("click", () => selectGame("dare")); quizTab.addEventListener("click", () => selectGame("quiz"));
+function drawPrompt(skipped) {
+  if (!skipped && role !== nextDareRole) { dareStatus.textContent = "It is your partner’s turn to choose the next prompt."; return; }
+  if (adultMode.checked && !(adultConsent.A && adultConsent.B)) {
+    dareStatus.textContent = "18+ prompts need both players to opt in. Waiting for partner...";
+    adultConsent[role] = true;
+    gameSend({ kind: "adult-consent", enabled: true });
+    return;
+  }
+  const isAdult = adultMode.checked && adultConsent.A && adultConsent.B;
+  const mode = dareMode.value === "mix" ? ["playful", "romantic", "flirty"][Math.floor(Math.random() * 3)] : dareMode.value;
+  const list = isAdult ? adultPrompts : darePrompts[mode];
+  const prompt = list[Math.floor(Math.random() * list.length)];
+  const label = isAdult ? "SPICY / NAUGHTY · 18+" : { playful:"PLAYFUL DARE", romantic:"ROMANTIC QUESTION", flirty:"FLIRTY CHALLENGE" }[mode];
+  const state = { kind:"dare", tag:label, prompt, by:role === "A" ? "Chosen by you — take turns, or skip anytime." : "Chosen by your partner — take turns, or skip anytime.", status: skipped ? "skip" : "new", nextRole: role === "A" ? "B" : "A" };
+  gameStateReceived(state); gameSend(state);
+}
+$("drawDare").addEventListener("click", () => drawPrompt(false));
+$("skipDare").addEventListener("click", () => drawPrompt(true));
+dareMode.addEventListener("change", () => { dareStatus.textContent = "Mood updated for the next prompt."; });
+adultMode.addEventListener("change", () => {
+  if (!adultMode.checked) { adultConsent[role] = false; gameSend({ kind:"adult-consent", enabled:false }); return; }
+  dareStatus.textContent = "Waiting for your partner to opt in to 18+ prompts too.";
+  gameSend({ kind:"adult-consent", enabled:true });
+});
+quizForm.addEventListener("submit", event => {
+  event.preventDefault(); const answer = quizGuess.value.trim();
+  if (!answer) { quizStatus.textContent = "Add your guess first."; return; }
+  gameStateReceived({ kind:"quiz", question:quizQuestion.textContent, answer, by:role, revealed:false, awarded:false, scores:gameScores });
+  gameSend({ kind:"quiz", question:quizQuestion.textContent, answer, by:role, revealed:false, awarded:false, scores:gameScores });
+  quizGuess.value = ""; quizStatus.textContent = "Answer shared with your partner.";
+});
+$("revealQuiz").addEventListener("click", () => {
+  if (!quizAnswerValue || quizRevealed) return;
+  quizRevealed = true;
+  if (quizAnswerBy && quizAnswerBy !== role) gameScores[quizAnswerBy] = (gameScores[quizAnswerBy] || 0) + 1;
+  const state = { kind:"quiz", question:quizQuestion.textContent, answer:quizAnswerValue, by:quizAnswerBy, revealed:true, awarded:!!quizAnswerBy && quizAnswerBy !== role, scores:gameScores };
+  gameStateReceived(state); gameSend(state);
+});
+$("nextQuiz").addEventListener("click", () => {
+  const question = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
+  const state = { kind:"quiz", question, answer:"", by:null, revealed:false, awarded:false, scores:gameScores };
+  gameStateReceived(state); gameSend(state);
 });
 
 /* PRIVATE CHAT */

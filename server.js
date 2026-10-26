@@ -1,3 +1,4 @@
+
 "use strict";
 
 const http = require("http");
@@ -79,7 +80,7 @@ const wss = new WebSocket.Server({
 });
 
 /*
- * Rooms keep active connections and reconnect state.
+ * Rooms keep only active connections and reconnect state.
  * Chat messages, voice notes, photos, and videos are relayed
  * directly to the other participant and are not saved as history.
  */
@@ -148,34 +149,6 @@ function notifyPartner(room, socket, message) {
 
   if (other && other.readyState === WebSocket.OPEN) {
     sendJson(other, message);
-  }
-}
-
-/* Restore shared game state after joining or reconnecting. */
-function sendGameState(socket, room) {
-  if (!socket || !room) return;
-
-  if (room.dareState) {
-    sendJson(socket, {
-      type: "game-dare-state",
-      ...room.dareState
-    });
-  }
-
-  if (room.quizState) {
-    if (room.quizState.result) {
-      sendJson(socket, {
-        type: "game-quiz-result",
-        ...room.quizState.result
-      });
-    } else {
-      sendJson(socket, {
-        type: "game-quiz-state",
-        question: room.quizState.question,
-        askerRole: room.quizState.askerRole,
-        scores: room.quizState.scores
-      });
-    }
   }
 }
 
@@ -261,11 +234,8 @@ function handleChatMessage(socket, message) {
       ? message.mime.slice(0, 80).toLowerCase()
       : "";
 
-    const allowedImageMime =
-      /^image\/(jpeg|png|webp|gif)$/i.test(mime);
-
-    const allowedVideoMime =
-      /^video\/(mp4|webm|quicktime|3gpp|x-m4v)$/i.test(mime);
+    const allowedImageMime = /^image\/(jpeg|png|webp|gif)$/i.test(mime);
+    const allowedVideoMime = /^video\/(mp4|webm|quicktime|3gpp|x-m4v)$/i.test(mime);
 
     if (
       (mediaType === "image" && !allowedImageMime) ||
@@ -325,9 +295,7 @@ wss.on("connection", socket => {
         b: null,
         aDisconnected: false,
         bDisconnected: false,
-        cleanupTimer: null,
-        dareState: null,
-        quizState: null
+        cleanupTimer: null
       });
 
       socket.room = code;
@@ -378,12 +346,6 @@ wss.on("connection", socket => {
         });
       }
 
-      sendGameState(socket, room);
-
-      if (room.a && room.a.readyState === WebSocket.OPEN) {
-        sendGameState(room.a, room);
-      }
-
       return;
     }
 
@@ -431,169 +393,6 @@ wss.on("connection", socket => {
         });
       }
 
-      sendGameState(socket, room);
-
-      if (other && other.readyState === WebSocket.OPEN) {
-        sendGameState(other, room);
-      }
-
-      return;
-    }
-
-    /* SHARED COUPLES GAME: DARE ME */
-    if (message.type === "game-dare-update") {
-      const room = getRoomForSocket(socket);
-      if (!room) return;
-
-      const categories = ["playful", "romantic", "flirty"];
-      const spiceLevels = ["sweet", "warm", "spicy"];
-
-      if (
-        typeof message.prompt !== "string" ||
-        message.prompt.length > 300
-      ) {
-        return;
-      }
-
-      const category = categories.includes(message.category)
-        ? message.category
-        : "playful";
-
-      const spice = spiceLevels.includes(message.spice)
-        ? message.spice
-        : "sweet";
-
-      room.dareState = {
-        category,
-        spice,
-        prompt: message.prompt,
-        byRole: socket.partner
-      };
-
-      const outgoing = {
-        type: "game-dare-state",
-        ...room.dareState
-      };
-
-      sendJson(room.a, outgoing);
-      sendJson(room.b, outgoing);
-
-      return;
-    }
-
-    /* SHARED COUPLES GAME: HOW WELL DO YOU KNOW ME? */
-    if (message.type === "game-quiz-start") {
-      const room = getRoomForSocket(socket);
-
-      if (
-        !room ||
-        typeof message.question !== "string" ||
-        typeof message.answer !== "string"
-      ) {
-        return;
-      }
-
-      /*
-       * After a round ends, only the person who guessed may
-       * start the next round. This makes partners alternate roles.
-       */
-      if (
-        room.quizState?.result &&
-        socket.partner !== room.quizState.result.guesserRole
-      ) {
-        sendJson(socket, {
-          type: "error",
-          message: "It's your partner's turn to ask the next question."
-        });
-        return;
-      }
-
-      const question = message.question.trim().slice(0, 240);
-      const answer = message.answer.trim().slice(0, 120);
-
-      if (!question || !answer) return;
-
-      const scores = room.quizState?.scores || {
-        A: 0,
-        B: 0
-      };
-
-      /*
-       * The answer stays server-side until a guess is submitted.
-       * Only the question, asker role, and scores are broadcast.
-       */
-      room.quizState = {
-        question,
-        answer,
-        askerRole: socket.partner,
-        scores,
-        result: null
-      };
-
-      const outgoing = {
-        type: "game-quiz-state",
-        question,
-        askerRole: socket.partner,
-        scores
-      };
-
-      sendJson(room.a, outgoing);
-      sendJson(room.b, outgoing);
-
-      return;
-    }
-
-    /* HOW WELL DO YOU KNOW ME?: SUBMIT A GUESS */
-    if (message.type === "game-quiz-guess") {
-      const room = getRoomForSocket(socket);
-      const quiz = room?.quizState;
-
-      if (
-        !room ||
-        !quiz ||
-        quiz.result ||
-        socket.partner === quiz.askerRole
-      ) {
-        return;
-      }
-
-      if (typeof message.guess !== "string") return;
-
-      const guess = message.guess.trim().slice(0, 120);
-      if (!guess) return;
-
-      const normalize = value =>
-        value
-          .normalize("NFKD")
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, " ")
-          .trim();
-
-      const correct = normalize(guess) === normalize(quiz.answer);
-
-      if (correct) {
-        quiz.scores[socket.partner] =
-          (quiz.scores[socket.partner] || 0) + 1;
-      }
-
-      quiz.result = {
-        question: quiz.question,
-        answer: quiz.answer,
-        guess,
-        correct,
-        askerRole: quiz.askerRole,
-        guesserRole: socket.partner,
-        scores: quiz.scores
-      };
-
-      const outgoing = {
-        type: "game-quiz-result",
-        ...quiz.result
-      };
-
-      sendJson(room.a, outgoing);
-      sendJson(room.b, outgoing);
-
       return;
     }
 
@@ -610,9 +409,7 @@ wss.on("connection", socket => {
         intensity: Number.isFinite(intensity)
           ? Math.max(0, Math.min(1, intensity))
           : 0,
-        pattern: message.pattern === "pulse"
-          ? "pulse"
-          : "continuous"
+        pattern: message.pattern === "pulse" ? "pulse" : "continuous"
       });
 
       return;
@@ -639,6 +436,36 @@ wss.on("connection", socket => {
         type: "stop"
       });
 
+      return;
+    }
+
+    /* ROOM-SCOPED COUPLES GAME STATE */
+    if (message.type === "game-state") {
+      const room = getRoomForSocket(socket);
+      if (!room || !message.state || typeof message.state !== "object") return;
+      const state = message.state;
+      const clean = {};
+      if (state.kind === "dare") {
+        clean.kind = "dare";
+        clean.tag = typeof state.tag === "string" ? state.tag.slice(0, 40) : "PROMPT";
+        clean.prompt = typeof state.prompt === "string" ? state.prompt.slice(0, 500) : "";
+        clean.by = typeof state.by === "string" ? state.by.slice(0, 100) : "";
+        clean.status = state.status === "skip" ? "skip" : "new";
+        clean.nextRole = state.nextRole === "A" || state.nextRole === "B" ? state.nextRole : null;
+      } else if (state.kind === "quiz") {
+        clean.kind = "quiz";
+        clean.question = typeof state.question === "string" ? state.question.slice(0, 300) : "";
+        clean.answer = typeof state.answer === "string" ? state.answer.slice(0, 240) : "";
+        clean.revealed = !!state.revealed;
+        clean.by = state.by === "A" || state.by === "B" ? state.by : null;
+        clean.awarded = !!state.awarded;
+        clean.scores = { A: Math.max(0, Math.min(999, Number(state.scores?.A) || 0)), B: Math.max(0, Math.min(999, Number(state.scores?.B) || 0)) };
+      } else if (state.kind === "adult-consent") {
+        clean.kind = "adult-consent";
+        clean.enabled = !!state.enabled;
+        clean.by = socket.partner;
+      } else return;
+      notifyPartner(room, socket, { type: "game-state", state: clean });
       return;
     }
 
