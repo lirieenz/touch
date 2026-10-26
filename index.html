@@ -1,687 +1,2571 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+  <meta name="theme-color" content="#000000">
+  <title></title>
 
-<meta charset="UTF-8">
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-<meta name="theme-color" content="#000000">
+    body {
+      touch-action: none;
+    }
 
-<title></title>
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: none;
+      position: relative;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* =========================
+       HOME
+    ========================= */
+
+    #homeScreen {
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 25px;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 35px;
+      text-align: center;
+    }
+
+    .home-card {
+      width: min(420px, 100%);
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 18px;
+      padding: 25px;
+    }
+
+    .home-card h2 {
+      margin: 0 0 18px;
+      font-size: 20px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 48px;
+      background: #181818;
+      color: white;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 0 14px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #666;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn {
+      flex: 1;
+      height: 48px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      color: white;
+      background: #222;
+    }
+
+    .btn.primary {
+      background: #e50914;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .status {
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+      margin-top: 18px;
+      min-height: 16px;
+    }
+
+    /* =========================
+       CONTROLLER
+    ========================= */
+
+    #controllerScreen {
+      background: #000;
+      flex-direction: column;
+    }
+
+    #controllerCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .controller-top {
+      position: absolute;
+      z-index: 5;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .connection-pill {
+      background: rgba(20, 20, 20, 0.85);
+      border: 1px solid #292929;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 11px;
+      color: #aaa;
+      pointer-events: auto;
+    }
+
+    .connection-pill.connected {
+      color: #8cff9a;
+    }
+
+    .controller-controls {
+      position: absolute;
+      z-index: 5;
+      left: 15px;
+      right: 15px;
+      bottom: 18px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .mode-select {
+      flex: 1;
+      height: 46px;
+      background: rgba(20, 20, 20, 0.92);
+    }
+
+    .heart-btn {
+      width: 52px;
+      height: 46px;
+      border: none;
+      border-radius: 10px;
+      background: #222;
+      color: white;
+      font-size: 23px;
+      cursor: pointer;
+    }
+
+    .heart-btn:active {
+      transform: scale(0.94);
+    }
+
+    .finger-info {
+      position: absolute;
+      z-index: 5;
+      top: 58px;
+      left: 15px;
+      font-size: 11px;
+      color: #666;
+      pointer-events: none;
+    }
+
+    /* =========================
+       RECEIVER
+    ========================= */
+
+    #receiverScreen {
+      background: #000;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .receiver-status {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: #555;
+      font-size: 11px;
+      z-index: 3;
+    }
+
+    .receiver-heart {
+      position: absolute;
+      font-size: 110px;
+      opacity: 0;
+      transform: scale(0.5);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .receiver-heart.show {
+      animation: heartPop 0.7s ease-out;
+    }
+
+    @keyframes heartPop {
+      0% {
+        opacity: 0;
+        transform: scale(0.4);
+      }
+
+      25% {
+        opacity: 1;
+        transform: scale(1.15);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.35);
+      }
+    }
+
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.96);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 25px;
+    }
+
+    .lock-overlay.active {
+      display: flex;
+    }
+
+    .lock-icon {
+      font-size: 52px;
+      margin-bottom: 15px;
+    }
+
+    .lock-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .lock-text {
+      color: #777;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    .unlock-btn {
+      background: #222;
+      border: 1px solid #333;
+      color: white;
+      padding: 12px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .receiver-bottom {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: #333;
+      font-size: 10px;
+      pointer-events: none;
+    }
+
+    /* =========================
+       CONNECTING
+    ========================= */
+
+    .connecting {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .connecting.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #222;
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 18px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .connecting-text {
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* =========================
+       ROOM CODE
+    ========================= */
+
+    .room-code {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #181818;
+      text-align: center;
+      display: none;
+    }
+
+    .room-code.visible {
+      display: block;
+    }
+
+    .room-code-label {
+      color: #777;
+      font-size: 10px;
+      margin-bottom: 7px;
+    }
+
+    .room-code-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 5px;
+    }
+
+    .room-code-hint {
+      color: #666;
+      font-size: 11px;
+      margin-top: 7px;
+    }
+
+    /* Private chat additions. Existing screens and styling stay intact. */
+    .private-chat-toggle { position: fixed; z-index: 40; right: 16px; bottom: 18px; border: 1px solid #522; border-radius: 999px; background: #b51228; color: #fff; padding: 12px 16px; font-weight: 700; box-shadow: 0 4px 22px #0009; display: none; }
+    .private-chat-toggle.visible { display: block; }
+    .private-chat { position: fixed; z-index: 50; right: 12px; bottom: 72px; width: min(360px, calc(100vw - 24px)); height: min(480px, calc(100dvh - 100px)); background: #101010; border: 1px solid #333; border-radius: 18px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 12px 40px #000b; }
+    .private-chat.open { display: flex; }
+    .chat-head { display:flex; align-items:center; justify-content:space-between; padding: 13px 15px; border-bottom:1px solid #292929; font-weight:700; }
+    .chat-subtitle { color:#777; font-size:10px; font-weight:400; margin-top:3px; }
+    .chat-icon-btn { background:#222; border:1px solid #383838; color:white; border-radius:9px; padding:7px 10px; }
+    .chat-messages { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:9px; touch-action:pan-y; user-select:text; -webkit-user-select:text; }
+    .chat-empty { color:#666; font-size:12px; text-align:center; margin:auto 0; line-height:1.5; }
+    .chat-bubble { max-width:88%; align-self:flex-start; background:#242424; border-radius:13px 13px 13px 4px; padding:9px 11px; overflow-wrap:anywhere; font-size:13px; line-height:1.4; }
+    .chat-bubble.mine { align-self:flex-end; background:#651321; border-radius:13px 13px 4px 13px; }
+    .chat-time { color:#aaa; font-size:9px; margin-top:4px; }
+    .chat-bubble audio { width: min(240px, 65vw); height:34px; display:block; }
+    .chat-signals { display:flex; gap:6px; padding:9px 10px; overflow-x:auto; border-top:1px solid #242424; touch-action:pan-x; }
+    .chat-signals button { flex:0 0 auto; background:#1c1c1c; border:1px solid #383838; color:white; border-radius:999px; padding:7px 10px; font-size:11px; }
+    .chat-compose { display:flex; gap:7px; padding:10px; border-top:1px solid #292929; align-items:center; }
+    .chat-compose input { flex:1; min-width:0; height:42px; padding:0 11px; user-select:text; -webkit-user-select:text; touch-action:auto; }
+    .chat-send, .chat-record { background:#b51228; border:0; color:white; border-radius:10px; height:42px; padding:0 12px; font-weight:700; }
+    .chat-record { background:#242424; border:1px solid #444; padding:0 10px; }
+    .chat-record.recording { background:#b51228; }
+    .chat-note { color:#666; font-size:10px; padding:0 11px 9px; }
+    .chat-clear { color:#aaa; font-size:11px; background:none; border:0; padding:5px; }
+    .private-chat input, .private-chat button { touch-action: manipulation; }
+    @media (max-height: 500px) { .private-chat { height: calc(100dvh - 82px); bottom:64px; } .chat-note { display:none; } }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       HOME SCREEN
+  ========================= -->
+
+  <div id="homeScreen" class="screen active">
+
+    <div class="title"></div>
+
+    <div class="home-card">
+
+      <h2>Connect</h2>
+
+      <div class="field">
+        <label class="input-label">Room Code</label>
+        <input
+          id="roomInput"
+          type="text"
+          maxlength="6"
+          placeholder="Enter room code"
+          autocomplete="off"
+          autocapitalize="characters"
+        >
+      </div>
+
+      <div class="button-row">
+        <button id="createBtn" class="btn primary">
+          Create Room
+        </button>
+
+        <button id="joinBtn" class="btn">
+          Join Room
+        </button>
+      </div>
+
+      <div id="homeStatus" class="status">
+        Connecting...
+      </div>
+
+      <div id="roomCodeBox" class="room-code">
+        <div class="room-code-label">YOUR ROOM CODE</div>
+        <div id="roomCodeValue" class="room-code-value"></div>
+        <div class="room-code-hint">
+          Give this code to thea
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 
 
+  <!-- =========================
+       CONTROLLER SCREEN
+  ========================= -->
 
-<style>
+  <div id="controllerScreen" class="screen">
 
-* {
+    <canvas id="controllerCanvas"></canvas>
 
-  box-sizing: border-box;
+    <div class="controller-top">
 
-  -webkit-tap-highlight-color: transparent;
+      <div id="controllerConnection" class="connection-pill">
+        ● CONNECTING
+      </div>
+
+      <div id="controllerRoom" class="connection-pill">
+        ROOM ------
+      </div>
+
+    </div>
+
+    <div id="fingerInfo" class="finger-info">
+      Intensity: 0%
+    </div>
+
+    <div class="controller-controls">
+
+      <select id="modeSelect" class="mode-select">
+        <option value="continuous">Continuous</option>
+        <option value="pulse">Pulse / Heartbeat</option>
+      </select>
+
+      <button id="heartBtn" class="heart-btn">
+        ♥
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       RECEIVER SCREEN
+  ========================= -->
+
+  <div id="receiverScreen" class="screen">
+
+    <div id="receiverStatus" class="receiver-status">
+      ● HAPTICS READY
+    </div>
+
+    <div id="receiverHeart" class="receiver-heart">
+      ♥
+    </div>
+
+    <div class="receiver-bottom">
+      RECEIVER
+    </div>
+
+    <div id="lockOverlay" class="lock-overlay">
+
+      <div class="lock-icon">🔒</div>
+
+      <div class="lock-title">
+        Touch Locked
+      </div>
+
+      <div class="lock-text">
+        The receiver screen is locked so accidental touches
+        won't interfere with the connection.
+      </div>
+
+      <button id="unlockBtn" class="unlock-btn">
+        Hold to Unlock
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       CONNECTING OVERLAY
+  ========================= -->
+
+  <div id="connectingOverlay" class="connecting">
+
+    <div class="spinner"></div>
+
+    <div id="connectingText" class="connecting-text">
+      Connecting...
+    </div>
+
+  </div>
+
+  <button id="privateChatToggle" class="private-chat-toggle" type="button">💌 Chat</button>
+  <section id="privateChat" class="private-chat" aria-label="Private chat">
+    <div class="chat-head">
+      <div>Private messages<div class="chat-subtitle">Live only · not saved by the app</div></div>
+      <div style="display:flex;gap:6px;align-items:center"><button id="clearChatBtn" class="chat-clear" type="button">Clear</button><button id="closeChatBtn" class="chat-icon-btn" type="button" aria-label="Close chat">✕</button></div>
+    </div>
+    <div id="chatMessages" class="chat-messages"><div id="chatEmpty" class="chat-empty">A tiny private corner for the two of you. 💗<br>Messages disappear when you clear them or close this page.</div></div>
+    <div class="chat-signals">
+      <button type="button" data-signal="kiss">💋 Kiss</button><button type="button" data-signal="hug">🫂 Hug</button><button type="button" data-signal="miss">💗 Miss you</button><button type="button" data-signal="love">❤️ Love you</button><button type="button" data-signal="tease">😏 Thinking of you</button>
+    </div>
+    <form id="chatForm" class="chat-compose"><input id="chatInput" maxlength="500" placeholder="Say something sweet…" autocomplete="off"><button id="voiceRecordBtn" class="chat-record" type="button" title="Record a voice note">🎙</button><button class="chat-send" type="submit">Send</button></form>
+    <div class="chat-note" id="chatNote">Voice notes are limited to 15 seconds. Allow microphone access when asked.</div>
+  </section>
+
+<script>
+
+let socket = null;
+
+let role = null;
+let roomCode = null;
+
+let shouldReconnect = false;
+let reconnectTimer = null;
+
+let pendingAction = null;
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const homeScreen = document.getElementById("homeScreen");
+const controllerScreen = document.getElementById("controllerScreen");
+const receiverScreen = document.getElementById("receiverScreen");
+
+const roomInput = document.getElementById("roomInput");
+
+const createBtn = document.getElementById("createBtn");
+const joinBtn = document.getElementById("joinBtn");
+
+const homeStatus = document.getElementById("homeStatus");
+
+const roomCodeBox = document.getElementById("roomCodeBox");
+const roomCodeValue = document.getElementById("roomCodeValue");
+
+const controllerCanvas =
+  document.getElementById("controllerCanvas");
+
+const controllerConnection =
+  document.getElementById("controllerConnection");
+
+const controllerRoom =
+  document.getElementById("controllerRoom");
+
+const fingerInfo =
+  document.getElementById("fingerInfo");
+
+const modeSelect =
+  document.getElementById("modeSelect");
+
+const heartBtn =
+  document.getElementById("heartBtn");
+
+const receiverStatus =
+  document.getElementById("receiverStatus");
+
+const receiverHeart =
+  document.getElementById("receiverHeart");
+
+const lockOverlay =
+  document.getElementById("lockOverlay");
+
+const unlockBtn =
+  document.getElementById("unlockBtn");
+
+const connectingOverlay =
+  document.getElementById("connectingOverlay");
+
+const connectingText =
+  document.getElementById("connectingText");
+
+
+/* =========================
+   CANVAS
+========================= */
+
+const ctx = controllerCanvas.getContext("2d");
+
+let drawing = false;
+
+let lastX = 0;
+let lastY = 0;
+
+let canvasWidth = 0;
+let canvasHeight = 0;
+
+
+/* =========================
+   HAPTIC STATE
+========================= */
+
+let currentPattern = "continuous";
+
+let targetIntensity = 0;
+
+let pulseTimer = null;
+let continuousTimer = null;
+
+let hapticsRunning = false;
+
+
+/* =========================
+   RECEIVER HAPTIC ARMING
+========================= */
+
+let hapticsArmed = false;
+
+let wakeLock = null;
+
+function showScreen(screen) {
+
+  homeScreen.classList.remove("active");
+  controllerScreen.classList.remove("active");
+  receiverScreen.classList.remove("active");
+
+  screen.classList.add("active");
 
 }
 
-html, body {
 
-  margin: 0;
+function showConnecting(text) {
 
-  width: 100%;
-
-  height: 100%;
-
-  overflow: hidden;
-
-  background: #000;
-
-  color: #fff;
-
-  font-family: Arial, Helvetica, sans-serif;
+  connectingText.textContent = text;
+  connectingOverlay.classList.add("active");
 
 }
 
-body { touch-action: none; }
 
-button, input, select, textarea { font: inherit; }
+function hideConnecting() {
 
-button { cursor: pointer; }
-
-.screen {
-
-  width: 100%;
-
-  height: 100%;
-
-  display: none;
-
-  position: relative;
+  connectingOverlay.classList.remove("active");
 
 }
 
-.screen.active { display: flex; }
+function getWebSocketURL() {
 
+  const protocol =
+    location.protocol === "https:"
+      ? "wss:"
+      : "ws:";
 
-
-/* HOME */
-
-#homeScreen {
-
-  align-items: center;
-
-  justify-content: center;
-
-  flex-direction: column;
-
-  padding: 25px;
-
-}
-
-.title {
-
-  font-size: 32px;
-
-  font-weight: 700;
-
-  margin-bottom: 8px;
-
-  text-align: center;
-
-}
-
-.subtitle {
-
-  color: #999;
-
-  font-size: 14px;
-
-  margin-bottom: 35px;
-
-  text-align: center;
-
-}
-
-.home-card {
-
-  width: min(420px, 100%);
-
-  background: #111;
-
-  border: 1px solid #222;
-
-  border-radius: 18px;
-
-  padding: 25px;
-
-}
-
-.home-card h2 { margin: 0 0 18px; font-size: 20px; }
-
-.input-label {
-
-  display: block;
-
-  font-size: 12px;
-
-  color: #999;
-
-  margin-bottom: 7px;
-
-}
-
-input, select {
-
-  width: 100%;
-
-  height: 48px;
-
-  background: #181818;
-
-  color: #fff;
-
-  border: 1px solid #333;
-
-  border-radius: 10px;
-
-  padding: 0 14px;
-
-  outline: none;
-
-}
-
-input:focus, select:focus { border-color: #666; }
-
-.field { margin-bottom: 15px; }
-
-.button-row { display: flex; gap: 10px; margin-top: 18px; }
-
-.btn {
-
-  flex: 1;
-
-  height: 48px;
-
-  border: none;
-
-  border-radius: 10px;
-
-  font-weight: 700;
-
-  color: #fff;
-
-  background: #222;
-
-}
-
-.btn.primary { background: #e50914; }
-
-.btn:active { transform: scale(.98); }
-
-.status {
-
-  text-align: center;
-
-  color: #777;
-
-  font-size: 12px;
-
-  margin-top: 18px;
-
-  min-height: 16px;
-
-}
-
-.room-code {
-
-  margin-top: 15px;
-
-  padding: 15px;
-
-  border-radius: 12px;
-
-  background: #181818;
-
-  text-align: center;
-
-  display: none;
-
-}
-
-.room-code.visible { display: block; }
-
-.room-code-label { color: #777; font-size: 10px; margin-bottom: 7px; }
-
-.room-code-value { font-size: 28px; font-weight: 700; letter-spacing: 5px; }
-
-.room-code-hint { color: #666; font-size: 11px; margin-top: 7px; }
-
-
-
-/* CONTROLLER */
-
-#controllerScreen { background: #000; flex-direction: column; }
-
-#controllerCanvas {
-
-  position: absolute;
-
-  inset: 0;
-
-  width: 100%;
-
-  height: 100%;
-
-  z-index: 1;
-
-  touch-action: none;
-
-}
-
-.controller-top {
-
-  position: absolute;
-
-  z-index: 5;
-
-  top: 15px;
-
-  left: 15px;
-
-  right: 15px;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  pointer-events: none;
-
-}
-
-.connection-pill {
-
-  background: rgba(20,20,20,.85);
-
-  border: 1px solid #292929;
-
-  border-radius: 999px;
-
-  padding: 8px 12px;
-
-  font-size: 11px;
-
-  color: #aaa;
-
-  pointer-events: auto;
-
-}
-
-.connection-pill.connected { color: #8cff9a; }
-
-.controller-controls {
-
-  position: absolute;
-
-  z-index: 5;
-
-  left: 15px;
-
-  right: 15px;
-
-  bottom: 18px;
-
-  display: flex;
-
-  gap: 10px;
-
-  align-items: center;
-
-}
-
-.mode-select { flex: 1; height: 46px; background: rgba(20,20,20,.92); }
-
-.heart-btn {
-
-  width: 52px;
-
-  height: 46px;
-
-  border: none;
-
-  border-radius: 10px;
-
-  background: #222;
-
-  color: #fff;
-
-  font-size: 23px;
-
-}
-
-.heart-btn:active { transform: scale(.94); }
-
-.finger-info {
-
-  position: absolute;
-
-  z-index: 5;
-
-  top: 58px;
-
-  left: 15px;
-
-  font-size: 11px;
-
-  color: #666;
-
-  pointer-events: none;
+  return protocol + "//" + location.host;
 
 }
 
 
+function connectSocket() {
 
-/* RECEIVER */
+  if (
+    socket &&
+    (
+      socket.readyState === WebSocket.OPEN ||
+      socket.readyState === WebSocket.CONNECTING
+    )
+  ) {
 
-#receiverScreen {
+    return;
 
-  background: #000;
-
-  align-items: center;
-
-  justify-content: center;
-
-  flex-direction: column;
-
-}
-
-.receiver-status {
-
-  position: absolute;
-
-  top: 20px;
-
-  left: 0;
-
-  right: 0;
-
-  text-align: center;
-
-  color: #555;
-
-  font-size: 11px;
-
-  z-index: 3;
-
-}
-
-.receiver-heart {
-
-  position: absolute;
-
-  font-size: 110px;
-
-  opacity: 0;
-
-  transform: scale(.5);
-
-  pointer-events: none;
-
-  z-index: 10;
-
-}
-
-.receiver-heart.show { animation: heartPop .7s ease-out; }
-
-@keyframes heartPop {
-
-  0% { opacity: 0; transform: scale(.4); }
-
-  25% { opacity: 1; transform: scale(1.15); }
-
-  60% { opacity: 1; transform: scale(1); }
-
-  100% { opacity: 0; transform: scale(1.35); }
-
-}
-
-.lock-overlay {
-
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 50;
-
-  background: rgba(0,0,0,.96);
-
-  display: none;
-
-  align-items: center;
-
-  justify-content: center;
-
-  flex-direction: column;
-
-  text-align: center;
-
-  padding: 25px;
-
-}
-
-.lock-overlay.active { display: flex; }
-
-.lock-icon { font-size: 52px; margin-bottom: 15px; }
-
-.lock-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-
-.lock-text {
-
-  color: #777;
-
-  font-size: 13px;
-
-  line-height: 1.5;
-
-  margin-bottom: 25px;
-
-}
-
-.unlock-btn {
-
-  background: #222;
-
-  border: 1px solid #333;
-
-  color: #fff;
-
-  padding: 12px 22px;
-
-  border-radius: 10px;
-
-}
-
-.receiver-bottom {
-
-  position: absolute;
-
-  bottom: 20px;
-
-  left: 0;
-
-  right: 0;
-
-  text-align: center;
-
-  color: #333;
-
-  font-size: 10px;
-
-  pointer-events: none;
-
-}
-
-
-
-/* CONNECTING */
-
-.connecting {
-
-  position: fixed;
-
-  inset: 0;
-
-  background: #000;
-
-  z-index: 100;
-
-  display: none;
-
-  align-items: center;
-
-  justify-content: center;
-
-  flex-direction: column;
-
-  text-align: center;
-
-}
-
-.connecting.active { display: flex; }
-
-.spinner {
-
-  width: 28px;
-
-  height: 28px;
-
-  .chat-bubble audio {
-  display: block;
-  width: min(240px, 68vw);
-  max-width: 100%;
-  height: 36px;
-}
-.chat-composer {
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-  padding: 10px;
-  border-top: 1px solid #242424;
-  background: #101010;
-}
-.chat-input {
-  flex: 1;
-  min-width: 0;
-  max-height: 96px;
-  resize: none;
-  border: 1px solid #333;
-  border-radius: 12px;
-  outline: none;
-  padding: 10px 11px;
-  background: #191919;
-  color: #fff;
-  font: 13px Arial, sans-serif;
-  touch-action: auto;
-  user-select: text;
-  -webkit-user-select: text;
-}
-.chat-input:focus { border-color: #8d3037; }
-.chat-send, .chat-record, .chat-attach {
-  width: 39px;
-  height: 40px;
-  flex: 0 0 39px;
-  border: 0;
-  border-radius: 12px;
-  background: #e3343e;
-  color: #fff;
-  font-size: 17px;
-}
-.chat-record, .chat-attach {
-  background: #242424;
-  border: 1px solid #383838;
-}
-.chat-record.recording { background: #e3343e; animation: recordPulse 1s infinite; }
-.chat-status {
-  color: #e88b90;
-  font-size: 10px;
-  min-height: 13px;
-  padding: 0 11px 5px;
-  background: #101010;
-}
-.chat-footnote {
-  padding: 0 11px 9px;
-  color: #626262;
-  background: #101010;
-  font-size: 9px;
-  line-height: 1.4;
-}
-.discreet .chat-bubble .chat-content { filter: blur(7px); }
-.discreet .chat-bubble:hover .chat-content,
-.discreet .chat-bubble:active .chat-content { filter: none; }
-@keyframes recordPulse { 50% { opacity: .55; } }
-
-/* MEDIA ATTACHMENTS: PREVIEW ONLY AFTER CLICK */
-.media-attachment {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 175px;
-  max-width: 240px;
-  padding: 12px;
-  background: #202020;
-  border: 1px solid #3a3a3a;
-  color: #fff;
-  border-radius: 10px;
-  text-align: left;
-}
-.mine .media-attachment { background: #481b20; border-color: #6a292f; }
-.media-attachment-icon { font-size: 25px; }
-.media-attachment-title { font-size: 12px; font-weight: 700; }
-.media-attachment-hint { font-size: 10px; color: #aaa; margin-top: 4px; }
-.media-preview {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-  background: rgba(0,0,0,.94);
-  touch-action: manipulation;
-}
-.media-preview.open { display: flex; }
-.media-preview-content {
-  width: min(700px, 100%);
-  max-height: 90dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-.media-preview img, .media-preview video {
-  display: block;
-  max-width: 100%;
-  max-height: 78dvh;
-  object-fit: contain;
-  border-radius: 10px;
-  background: #111;
-}
-.media-preview-close {
-  align-self: flex-end;
-  border: 1px solid #444;
-  background: #222;
-  color: #fff;
-  border-radius: 10px;
-  padding: 10px 14px;
-}
-.hidden-file { display: none; }
-
-@media (max-width: 420px) {
-  .companion-panel {
-    right: 8px;
-    bottom: 76px;
-    width: calc(100vw - 16px);
-    height: min(560px, calc(100dvh - 100px));
   }
-  .companion-launcher { right: 12px; bottom: 12px; }
+
+
+  socket = new WebSocket(
+    getWebSocketURL()
+  );
+
+
+  socket.addEventListener("open", () => {
+
+    homeStatus.textContent =
+      "Connected to server.";
+
+
+    /*
+       If we already have an established room,
+       reconnect using the saved role and room.
+
+       If there is a pending create/join action,
+       perform that action instead.
+    */
+
+    if (
+      pendingAction
+    ) {
+
+      const action =
+        pendingAction;
+
+      pendingAction = null;
+
+
+      if (
+        action.type === "create"
+      ) {
+
+        socket.send(
+          JSON.stringify({
+            type: "create"
+          })
+        );
+
+      }
+
+
+      else if (
+        action.type === "join"
+      ) {
+
+        socket.send(
+          JSON.stringify({
+            type: "join",
+            code: action.code
+          })
+        );
+
+      }
+
+
+      return;
+
+    }
+
+
+    /*
+       Automatic reconnection.
+    */
+
+    if (
+      role &&
+      roomCode
+    ) {
+
+      socket.send(
+        JSON.stringify({
+
+          type: "reconnect",
+
+          room: roomCode,
+
+          role: role
+
+        })
+      );
+
+    }
+
+  });
+
+
+  socket.addEventListener("message", event => {
+
+    let message;
+
+    try {
+
+      message =
+        JSON.parse(event.data);
+
+    }
+
+    catch {
+
+      return;
+
+    }
+
+
+    handleMessage(message);
+
+  });
+
+
+  socket.addEventListener("close", () => {
+
+    socket = null;
+
+
+    if (
+      role === "A"
+    ) {
+
+      controllerConnection.textContent =
+        "● DISCONNECTED";
+
+      controllerConnection.classList.remove(
+        "connected"
+      );
+
+    }
+
+
+    if (
+      role === "B"
+    ) {
+
+      receiverStatus.textContent =
+        "● RECONNECTING...";
+
+      stopVibration();
+
+    }
+
+
+    if (
+      shouldReconnect
+    ) {
+
+      scheduleReconnect();
+
+    }
+
+  });
+
+
+  socket.addEventListener("error", () => {
+
+    homeStatus.textContent =
+      "Connection error.";
+
+  });
+
 }
 
-/* PASTEL COUPLES THEME */
-:root { --touch-pink: #FAD2D2; --touch-blue: #E6F6FA; --touch-ink: #563D48; --touch-muted: #8B7380; --touch-line: #E7C6CC; --touch-rose: #D9879C; }
-html, body { background: var(--touch-blue); color: var(--touch-ink); }
-#homeScreen { background: linear-gradient(145deg, var(--touch-pink), var(--touch-blue)); }
-.home-card { background: rgba(255,255,255,.78); border-color: #E8C2CA; box-shadow: 0 18px 55px #9D71801c; color: var(--touch-ink); }
-.title, .home-card h2 { color: var(--touch-ink); }
-.subtitle, .input-label, .status { color: var(--touch-muted); }
-input, select { background: #fff; color: var(--touch-ink); border-color: #E7C6CC; }
-input:focus, select:focus { border-color: var(--touch-rose); }
-.btn { background: var(--touch-blue); color: #416D7A; border: 1px solid #CDE9EF; }
-.btn.primary { background: var(--touch-pink); color: #754B5B; border: 1px solid #E6B9C4; }
-.room-code { background: var(--touch-blue); color: var(--touch-ink); }
-.room-code-label, .room-code-hint { color: var(--touch-muted); }
-#controllerScreen, #receiverScreen { background: var(--touch-blue); }
-#controllerCanvas { background: radial-gradient(ellipse at 50% 42%, #FAD2D2 0%, #E6F6FA 72%); }
-.connection-pill { background: #ffffffdc; border-color: #D5E9ED; color: #6E8790; }
-.connection-pill.connected { color: #47856D; }
-.mode-select { background: #fff; color: var(--touch-ink); }
-.heart-btn { background: var(--touch-pink); color: #B65E7B; }
-.finger-info, .receiver-status, .receiver-bottom { color: #7C9AA3; }
-.receiver-heart { color: #D9879C; }
-.lock-overlay { background: #E6F6FAf5; color: var(--touch-ink); }
-.lock-title { color: var(--touch-ink); }
-.lock-text { color: #6F8C95; }
-.unlock-btn { background: var(--touch-pink); color: #754B5B; border-color: #E6B9C4; }
-.connecting { background: #E6F6FA; }
-.spinner { border-color: #CDE9EF; border-top-color: #D9879C; }
-.connecting-text { color: #6F8C95; }
-.companion-launcher { background: var(--touch-pink); border-color: #E6B9C4; color: #9A526D; box-shadow: 0 6px 24px #9D718026; }
-.companion-panel { background: #F8FEFF; border-color: #D3EAF0; box-shadow: 0 12px 40px #6E92951f; color: var(--touch-ink); }
-.companion-header, .chat-composer, .chat-status, .chat-footnote { background: #F0FAFC; border-color: #D7EBEF; }
-.companion-heading { color: #563D48; }
-.companion-subheading, .chat-meta, .chat-footnote { color: #8B9DA2; }
-.chat-tool { background: #fff; color: #6C6870; border-color: #D8E8EB; }
-.chat-tool.danger { color: #B65E7B; }
-.chat-bubble { background: #E6F6FA; border-color: #CFE8EE; color: #4C5960; }
-.chat-bubble.mine { background: #FAD2D2; border-color: #E9BDC7; color: #563D48; }
-.chat-meta { color: #927D87; }}
+
+function scheduleReconnect() {
+
+  if (
+    reconnectTimer
+  ) {
+
+    return;
+
+  }
+
+
+  reconnectTimer =
+    setTimeout(() => {
+
+      reconnectTimer = null;
+
+      connectSocket();
+
+    }, 1500);
+
+}
+
+function handleMessage(message) {
+
+  switch (message.type) {
+
+    case "room-created": {
+
+      role = "A";
+
+      roomCode =
+        String(
+          message.code || ""
+        ).toUpperCase();
+
+
+      shouldReconnect = true;
+
+
+      roomCodeValue.textContent =
+        roomCode;
+
+      roomCodeBox.classList.add(
+        "visible"
+      );
+      syncChatVisibility();
+
+
+      homeStatus.textContent =
+        "Waiting for thea ...";
+
+        break;
+
+    }
+
+    case "joined": {
+
+      role = "B";
+
+      roomCode =
+        String(
+          message.code || ""
+        ).toUpperCase();
+
+
+      shouldReconnect = true;
+
+
+      homeStatus.textContent =
+        "Joined room.";
+
+
+      showScreen(
+        receiverScreen
+      );
+
+
+      initializeReceiverLock();
+      syncChatVisibility();
+
+      requestWakeLock();
+
+
+      break;
+
+    }
+
+
+    /* ==================================
+       PARTNER JOINED
+    ================================== */
+
+    case "partner-joined": {
+
+      if (
+        role === "A"
+      ) {
+
+        homeStatus.textContent =
+          "thea connected.";
+
+        showConnected();
+
+      }
+
+      break;
+
+    }
+
+
+    /* ==================================
+       PARTNER READY
+    ================================== */
+
+    case "partner-ready": {
+
+      if (
+        role === "A"
+      ) {
+
+        showConnected();
+
+      }
+
+      break;
+
+    }
+
+
+    case "chat": {
+      if (typeof message.text === "string") addChatBubble({ text: message.text.slice(0, 500), from: message.from, at: message.at });
+      break;
+    }
+
+    case "signal": {
+      if (typeof message.text === "string") addChatBubble({ text: message.text, from: message.from, at: message.at, signal: true });
+      break;
+    }
+
+    case "voice-note": {
+      if (typeof message.data === "string" && message.data.length <= 420000 && /^data:audio\//.test(message.data)) addChatBubble({ audioData: message.data, from: message.from, at: message.at });
+      break;
+    }
+
+    case "chat-error": {
+      chatNote.textContent = message.message || "Message could not be sent.";
+      break;
+    }
+
+    /* ==================================
+       CONTROL
+    ================================== */
+
+    case "control": {
+
+      if (
+        role === "B"
+      ) {
+
+        receiveControl(
+          message
+        );
+
+      }
+
+      break;
+
+    }
+
+case "stop": {
+
+  if (
+    role === "B"
+  ) {
+
+    targetIntensity = 0;
+
+    stopVibration();
+
+  }
+
+  break;
+
+}
+
+    case "heart": {
+
+      if (
+        role === "B"
+      ) {
+
+        receiveHeart();
+
+      }
+
+      break;
+
+    }
+
+
+    /* ==================================
+       PARTNER LEFT
+    ================================== */
+
+    case "partner-left": {
+
+      if (
+        role === "B"
+      ) {
+
+        stopVibration();
+
+        receiverStatus.textContent =
+          "● PARTNER DISCONNECTED";
+
+      }
+
+
+      if (
+        role === "A"
+      ) {
+
+        controllerConnection.textContent =
+          "● PARTNER DISCONNECTED";
+
+        controllerConnection.classList.remove(
+          "connected"
+        );
+
+      }
+
+      break;
+
+    }
+
+
+    /* ==================================
+       RECONNECTED
+    ================================== */
+
+    case "reconnected": {
+
+      /*
+         Server sends "code".
+      */
+
+      if (
+        message.code
+      ) {
+
+        roomCode =
+          String(
+            message.code
+          ).toUpperCase();
+
+      }
+
+
+      showConnected();
+
+      break;
+
+    }
+
+
+    /* ==================================
+       ERROR
+    ================================== */
+
+    case "error": {
+
+      homeStatus.textContent =
+        message.message ||
+        "Something went wrong.";
+
+      hideConnecting();
+
+      /*
+         Important:
+         Don't leave fake B state after
+         a failed join.
+      */
+
+      if (
+        !controllerScreen.classList.contains("active") &&
+        !receiverScreen.classList.contains("active")
+      ) {
+
+        role = null;
+        roomCode = null;
+        shouldReconnect = false;
+
+      }
+
+      break;
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   ROOM CREATION / JOINING
+========================================================= */
+
+createBtn.addEventListener(
+  "click",
+  () => {
+
+    /*
+       If socket is already connected,
+       create immediately.
+
+       Otherwise remember the action and
+       send it as soon as connection opens.
+    */
+
+    pendingAction = {
+      type: "create"
+    };
+
+
+    homeStatus.textContent =
+      "Creating room...";
+
+
+    connectSocket();
+
+  }
+);
+
+
+joinBtn.addEventListener(
+  "click",
+  () => {
+
+    const code =
+      roomInput.value
+        .trim()
+        .toUpperCase();
+
+
+    if (
+      !code
+    ) {
+
+      homeStatus.textContent =
+        "Enter a room code first.";
+
+      return;
+
+    }
+
+
+    /*
+       DO NOT set role or roomCode here.
+
+       They are only set after the server
+       confirms the join.
+
+       This prevents the join request from
+       accidentally becoming a reconnect.
+    */
+
+    pendingAction = {
+
+      type: "join",
+
+      code: code
+
+    };
+
+
+    homeStatus.textContent =
+      "Joining room...";
+
+
+    connectSocket();
+
+  }
+);
+
+
+roomInput.addEventListener(
+  "input",
+  () => {
+
+    roomInput.value =
+      roomInput.value
+        .replace(
+          /[^a-zA-Z0-9]/g,
+          ""
+        )
+        .toUpperCase();
+
+  }
+);
+
+
+/* =========================================================
+   CONNECTED UI
+========================================================= */
+
+function showConnected() {
+
+  hideConnecting();
+
+
+  if (
+    role === "A"
+  ) {
+
+    showScreen(
+      controllerScreen
+    );
+
+
+    controllerConnection.textContent =
+      "● CONNECTED";
+
+
+    controllerConnection.classList.add(
+      "connected"
+    );
+
+
+    controllerRoom.textContent =
+      "ROOM " + roomCode;
+
+
+    resizeCanvas();
+
+    requestWakeLock();
+
+  }
+
+
+  else if (
+    role === "B"
+  ) {
+
+    showScreen(
+      receiverScreen
+    );
+
+
+    receiverStatus.textContent =
+      "● HAPTICS READY";
+
+
+    initializeReceiverLock();
+
+    requestWakeLock();
+
+  }
+
+}
+
+
+/* =========================================================
+   CONTROLLER
+========================================================= */
+
+function resizeCanvas() {
+
+  canvasWidth =
+    window.innerWidth;
+
+  canvasHeight =
+    window.innerHeight;
+
+
+  const dpr =
+    Math.max(
+      1,
+      window.devicePixelRatio || 1
+    );
+
+
+  controllerCanvas.width =
+    canvasWidth * dpr;
+
+  controllerCanvas.height =
+    canvasHeight * dpr;
+
+
+  controllerCanvas.style.width =
+    canvasWidth + "px";
+
+  controllerCanvas.style.height =
+    canvasHeight + "px";
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+
+/* =========================================================
+   FINGER INTENSITY
+========================================================= */
+
+function getIntensity(y) {
+
+  if (
+    canvasHeight <= 0
+  ) {
+
+    return 0;
+
+  }
+
+
+  let intensity =
+    1 -
+    (
+      y /
+      canvasHeight
+    );
+
+
+  return Math.max(
+    0,
+    Math.min(
+      1,
+      intensity
+    )
+  );
+
+}
+
+
+/* =========================================================
+   DRAW FINGER
+========================================================= */
+
+function drawFinger(x, y) {
+
+  ctx.clearRect(
+    0,
+    0,
+    canvasWidth,
+    canvasHeight
+  );
+
+
+  if (
+    drawing
+  ) {
+
+    ctx.beginPath();
+
+
+    ctx.arc(
+      x,
+      y,
+      5,
+      0,
+      Math.PI * 2
+    );
+
+
+    ctx.fillStyle =
+      "#ff2b2b";
+
+
+    ctx.fill();
+
+  }
+
+}
+
+
+/* =========================================================
+   SEND CONTROL
+========================================================= */
+
+function sendControl(x, y) {
+
+  if (
+    !socket ||
+    socket.readyState !== WebSocket.OPEN
+  ) {
+
+    return;
+
+  }
+
+
+  const intensity =
+    getIntensity(y);
+
+
+  targetIntensity =
+    intensity;
+
+
+  fingerInfo.textContent =
+    "Intensity: " +
+    Math.round(
+      intensity * 100
+    ) +
+    "%";
+
+
+  socket.send(
+    JSON.stringify({
+
+      type: "control",
+
+      intensity: intensity,
+
+      pattern: currentPattern
+
+    })
+  );
+
+}
+
+function pointerDown(event) {
+
+  if (
+    event.pointerType === "mouse" &&
+    event.button !== 0
+  ) {
+
+    return;
+
+  }
+
+
+  drawing = true;
+
+
+  lastX =
+    event.clientX;
+
+  lastY =
+    event.clientY;
+
+
+  try {
+
+    controllerCanvas.setPointerCapture(
+      event.pointerId
+    );
+
+  }
+
+  catch {}
+
+
+  drawFinger(
+    lastX,
+    lastY
+  );
+
+
+  sendControl(
+    lastX,
+    lastY
+  );
+
+}
+
+
+function pointerMove(event) {
+
+  if (
+    !drawing
+  ) {
+
+    return;
+
+  }
+
+
+  lastX =
+    event.clientX;
+
+  lastY =
+    event.clientY;
+
+
+  drawFinger(
+    lastX,
+    lastY
+  );
+
+
+  sendControl(
+    lastX,
+    lastY
+  );
+
+}
+
+
+function pointerUp() {
+
+  if (
+    !drawing
+  ) {
+
+    return;
+
+  }
+
+
+  drawing = false;
+
+
+  ctx.clearRect(
+    0,
+    0,
+    canvasWidth,
+    canvasHeight
+  );
+
+
+  targetIntensity = 0;
+
+
+  if (
+    socket &&
+    socket.readyState === WebSocket.OPEN
+  ) {
+
+    /*
+       Send zero intensity as a fallback.
+    */
+
+    socket.send(
+      JSON.stringify({
+
+        type: "control",
+
+        intensity: 0,
+
+        pattern: currentPattern
+
+      })
+    );
+
+
+    /*
+       Explicitly tell the receiver
+       to stop immediately.
+    */
+
+    socket.send(
+      JSON.stringify({
+
+        type: "stop"
+
+      })
+    );
+
+  }
+
+
+  fingerInfo.textContent =
+    "Intensity: 0%";
+
+}
+
+controllerCanvas.addEventListener(
+  "pointerdown",
+  pointerDown
+);
+
+controllerCanvas.addEventListener(
+  "pointermove",
+  pointerMove
+);
+
+controllerCanvas.addEventListener(
+  "pointerup",
+  pointerUp
+);
+
+controllerCanvas.addEventListener(
+  "pointercancel",
+  pointerUp
+);
+
+controllerCanvas.addEventListener(
+  "pointerleave",
+  event => {
+
+    if (
+      event.pointerType === "mouse"
+    ) {
+
+      pointerUp();
+
+    }
+
+  }
+);
+
+modeSelect.addEventListener(
+  "change",
+  () => {
+
+    currentPattern =
+      modeSelect.value;
+
+
+    if (
+      socket &&
+      socket.readyState === WebSocket.OPEN
+    ) {
+
+      socket.send(
+        JSON.stringify({
+
+          type: "control",
+
+          intensity:
+            targetIntensity,
+
+          pattern:
+            currentPattern
+
+        })
+      );
+
+    }
+
+  }
+);
+
+heartBtn.addEventListener(
+  "click",
+  () => {
+
+    if (
+      !socket ||
+      socket.readyState !== WebSocket.OPEN
+    ) {
+
+      return;
+
+    }
+
+
+    socket.send(
+      JSON.stringify({
+
+        type: "heart"
+
+      })
+    );
+
+  }
+);
+
+function clamp(
+  value,
+  min,
+  max
+) {
+
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
+
+}
+
+function stopVibration() {
+
+  clearTimeout(pulseTimer);
+  clearTimeout(continuousTimer);
+
+  pulseTimer = null;
+  continuousTimer = null;
+
+  hapticsRunning = false;
+
+  if ("vibrate" in navigator) {
+
+    /*
+       Cancel any active vibration immediately.
+    */
+
+    navigator.vibrate(0);
+
+    /*
+       Some browsers/devices respond more reliably
+       when cancellation is explicitly repeated.
+    */
+
+    setTimeout(() => {
+
+      if (!hapticsRunning && targetIntensity <= 0.01) {
+
+        navigator.vibrate(0);
+
+      }
+
+    }, 20);
+
+  }
+
+}
+
+function startContinuousVibration() {
+
+  clearTimeout(continuousTimer);
+
+  if (targetIntensity <= 0.01) {
+
+    stopVibration();
+    return;
+
+  }
+
+  hapticsRunning = true;
+
+  const intensity =
+    clamp(
+      targetIntensity,
+      0,
+      1
+    );
+
+  /*
+     Browser vibration has no true amplitude control,
+     so Continuous intensity is simulated through
+     vibration duration.
+
+     TOP    = long/strong
+     MIDDLE = medium
+     BOTTOM = very short/weak
+  */
+
+  let vibrationDuration;
+
+  if (intensity >= 0.75) {
+
+    vibrationDuration = 1000;
+
+  }
+
+  else if (intensity >= 0.50) {
+
+    vibrationDuration = 650;
+
+  }
+
+  else if (intensity >= 0.25) {
+
+    vibrationDuration = 350;
+
+  }
+
+  else {
+
+    vibrationDuration = 120;
+
+  }
+
+
+  if ("vibrate" in navigator) {
+
+    navigator.vibrate(
+      vibrationDuration
+    );
+
+  }
+
+
+  /*
+     Refresh before the vibration ends.
+     This also checks the newest finger position.
+  */
+
+  const refreshTime =
+    Math.max(
+      80,
+      vibrationDuration - 80
+    );
+
+
+  continuousTimer =
+    setTimeout(() => {
+
+      if (
+        currentPattern === "continuous" &&
+        targetIntensity > 0.01
+      ) {
+
+        startContinuousVibration();
+
+      }
+
+      else {
+
+        stopVibration();
+
+      }
+
+    }, refreshTime);
+
+}
+
+function startPulseVibration() {
+
+  clearTimeout(
+    pulseTimer
+  );
+
+
+  if (
+    targetIntensity <= 0.01
+  ) {
+
+    stopVibration();
+
+    return;
+
+  }
+
+
+  hapticsRunning = true;
+
+
+  const intensity =
+    clamp(
+      targetIntensity,
+      0,
+      1
+    );
+
+
+  /*
+     BIG BEAT
+  */
+
+  const firstBeat =
+    Math.round(
+      70 +
+      intensity * 80
+    );
+
+
+  /*
+     Short pause
+  */
+
+  const shortPause =
+    75;
+
+
+  /*
+     SMALL BEAT
+  */
+
+  const secondBeat =
+    Math.round(
+      35 +
+      intensity * 45
+    );
+
+
+  /*
+     Long heartbeat pause
+  */
+
+  const longPause =
+    430;
+
+
+  const pattern = [
+
+    firstBeat,
+
+    shortPause,
+
+    secondBeat,
+
+    longPause
+
+  ];
+
+
+  if (
+    "vibrate" in navigator
+  ) {
+
+    navigator.vibrate(
+      pattern
+    );
+
+  }
+
+
+  const totalDuration =
+    firstBeat +
+    shortPause +
+    secondBeat +
+    longPause;
+
+
+  pulseTimer =
+    setTimeout(
+      () => {
+
+        if (
+          currentPattern ===
+            "pulse" &&
+          targetIntensity > 0.01
+        ) {
+
+          startPulseVibration();
+
+        }
+
+        else if (
+          currentPattern ===
+            "continuous" &&
+          targetIntensity > 0.01
+        ) {
+
+          startContinuousVibration();
+
+        }
+
+        else {
+
+          stopVibration();
+
+        }
+
+      },
+      totalDuration
+    );
+
+}
+
+function receiveControl(message) {
+
+  const newIntensity =
+    clamp(
+      Number(message.intensity) || 0,
+      0,
+      1
+    );
+
+  const previousIntensity =
+    targetIntensity;
+
+
+  targetIntensity =
+    newIntensity;
+
+
+  /*
+     Update mode immediately.
+  */
+
+  if (message.pattern) {
+
+    const newPattern =
+      message.pattern === "pulse"
+        ? "pulse"
+        : "continuous";
+
+
+    if (newPattern !== currentPattern) {
+
+      currentPattern =
+        newPattern;
+
+      stopVibration();
+
+    }
+
+  }
+
+
+  /*
+     FINGER LIFTED / BOTTOM
+  */
+
+  if (targetIntensity <= 0.01) {
+
+    stopVibration();
+
+    return;
+
+  }
+
+
+  /*
+     CONTINUOUS
+
+     Restart when the finger moves enough
+     to change the vibration intensity.
+  */
+
+  if (
+    currentPattern === "continuous"
+  ) {
+
+    const intensityChanged =
+      Math.abs(
+        targetIntensity -
+        previousIntensity
+      ) >= 0.02;
+
+
+    if (
+      !hapticsRunning ||
+      intensityChanged
+    ) {
+
+      startContinuousVibration();
+
+    }
+
+    return;
+
+  }
+
+
+  /*
+     PULSE / HEARTBEAT
+  */
+
+  if (
+    !hapticsRunning
+  ) {
+
+    startPulseVibration();
+
+  }
+
+}
+
+function receiveHeart() {
+
+  receiverHeart.classList.remove(
+    "show"
+  );
+
+
+  void receiverHeart.offsetWidth;
+
+
+  receiverHeart.classList.add(
+    "show"
+  );
+
+
+  if (
+    "vibrate" in navigator
+  ) {
+
+    navigator.vibrate([
+
+      80,
+      70,
+      120,
+      180,
+      80
+
+    ]);
+
+  }
+
+}
+
+function armHaptics() {
+
+  if (
+    hapticsArmed
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    "vibrate" in navigator
+  ) {
+
+    navigator.vibrate(1);
+
+    navigator.vibrate(0);
+
+  }
+
+
+  hapticsArmed = true;
+
+
+  receiverStatus.textContent =
+    "● HAPTICS READY";
+
+}
+
+
+receiverScreen.addEventListener(
+  "pointerdown",
+  armHaptics
+);
+
+let unlockTimer = null;
+
+
+function toggleLock() {
+
+  lockOverlay.classList.add(
+    "active"
+  );
+
+}
+
+
+function startUnlock() {
+
+  clearTimeout(
+    unlockTimer
+  );
+
+
+  unlockBtn.textContent =
+    "Keep holding...";
+
+
+  unlockTimer =
+    setTimeout(
+      () => {
+
+        lockOverlay.classList.remove(
+          "active"
+        );
+
+
+        unlockBtn.textContent =
+          "Hold to Unlock";
+
+      },
+      1500
+    );
+
+}
+
+
+function cancelUnlock() {
+
+  clearTimeout(
+    unlockTimer
+  );
+
+
+  unlockBtn.textContent =
+    "Hold to Unlock";
+
+}
+
+
+unlockBtn.addEventListener(
+  "pointerdown",
+  startUnlock
+);
+
+unlockBtn.addEventListener(
+  "pointerup",
+  cancelUnlock
+);
+
+unlockBtn.addEventListener(
+  "pointercancel",
+  cancelUnlock
+);
+
+unlockBtn.addEventListener(
+  "pointerleave",
+  cancelUnlock
+);
+
+function initializeReceiverLock() {
+
+  lockOverlay.classList.add(
+    "active"
+  );
+
+}
+
+
+receiverScreen.addEventListener(
+  "touchmove",
+  event => {
+
+    if (
+      lockOverlay.classList.contains(
+        "active"
+      )
+    ) {
+
+      event.preventDefault();
+
+    }
+
+  },
+  {
+    passive: false
+  }
+);
+
+async function requestWakeLock() {
+
+  try {
+
+    if (
+      "wakeLock" in navigator
+    ) {
+
+      wakeLock =
+        await navigator.wakeLock.request(
+          "screen"
+        );
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.log(
+      "Wake lock unavailable:",
+      error
+    );
+
+  }
+
+}
+
+
+document.addEventListener(
+  "visibilitychange",
+  async () => {
+
+    if (
+      document.visibilityState ===
+        "visible" &&
+      role
+    ) {
+
+      await requestWakeLock();
+
+    }
+
+  }
+);
+
+/* =========================
+   PRIVATE CHAT + VOICE NOTES
+   Client-side messages are ephemeral and are not written to local storage.
+========================= */
+const privateChatToggle = document.getElementById("privateChatToggle");
+const privateChat = document.getElementById("privateChat");
+const closeChatBtn = document.getElementById("closeChatBtn");
+const clearChatBtn = document.getElementById("clearChatBtn");
+const chatMessages = document.getElementById("chatMessages");
+const chatEmpty = document.getElementById("chatEmpty");
+const chatForm = document.getElementById("chatForm");
+const chatInput = document.getElementById("chatInput");
+const voiceRecordBtn = document.getElementById("voiceRecordBtn");
+const chatNote = document.getElementById("chatNote");
+let voiceRecorder = null;
+let voiceChunks = [];
+let voiceStream = null;
+let voiceTimer = null;
+let voiceStartedAt = 0;
+
+function chatSend(payload) {
+  if (!socket || socket.readyState !== WebSocket.OPEN || !roomCode || !role) {
+    chatNote.textContent = "Connect with your partner first.";
+    return false;
+  }
+  socket.send(JSON.stringify(payload));
+  return true;
+}
+
+function addChatBubble({ text = "", audioData = null, from = role, at = Date.now(), signal = false }) {
+  if (chatEmpty) chatEmpty.style.display = "none";
+  const bubble = document.createElement("div");
+  bubble.className = "chat-bubble" + (from === role ? " mine" : "");
+  if (audioData) {
+    const audio = document.createElement("audio");
+    audio.controls = true; audio.preload = "none"; audio.src = audioData;
+    bubble.appendChild(audio);
+    const label = document.createElement("div"); label.textContent = "🎙 Voice note"; label.style.marginTop = "5px"; bubble.appendChild(label);
+  } else {
+    const body = document.createElement("div"); body.textContent = text; bubble.appendChild(body);
+  }
+  const time = document.createElement("div"); time.className = "chat-time";
+  time.textContent = (from === role ? "You" : "Partner") + " · " + new Date(at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  bubble.appendChild(time); chatMessages.appendChild(bubble); chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function clearPrivateChat() {
+  chatMessages.querySelectorAll(".chat-bubble").forEach(node => {
+    const audio = node.querySelector("audio"); if (audio) { audio.pause(); audio.removeAttribute("src"); }
+    node.remove();
+  });
+  if (chatEmpty) chatEmpty.style.display = "block";
+}
+
+privateChatToggle.addEventListener("click", () => privateChat.classList.toggle("open"));
+closeChatBtn.addEventListener("click", () => privateChat.classList.remove("open"));
+clearChatBtn.addEventListener("click", clearPrivateChat);
+chatForm.addEventListener("submit", event => {
+  event.preventDefault(); const text = chatInput.value.trim(); if (!text) return;
+  if (chatSend({ type: "chat", text })) { addChatBubble({ text, from: role, at: Date.now() }); chatInput.value = ""; chatNote.textContent = "Live only · not saved by the app"; }
+});
+document.querySelectorAll("[data-signal]").forEach(button => button.addEventListener("click", () => {
+  const signal = button.dataset.signal;
+  const messages = { kiss: "💋 Sending you a kiss", hug: "🫂 Come here, hug time", miss: "💗 I miss you", love: "❤️ I love you", tease: "😏 Thinking about you" };
+  if (chatSend({ type: "signal", signal })) addChatBubble({ text: messages[signal], from: role, at: Date.now(), signal: true });
+}));
+
+async function startVoiceNote() {
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    chatNote.textContent = "Voice recording is not supported by this browser."; return;
+  }
+  if (!socket || socket.readyState !== WebSocket.OPEN || !roomCode) { chatNote.textContent = "Connect with your partner first."; return; }
+  try {
+    voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const options = {};
+    if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) options.mimeType = "audio/webm;codecs=opus";
+    voiceRecorder = new MediaRecorder(voiceStream, options); voiceChunks = []; voiceStartedAt = Date.now();
+    voiceRecorder.ondataavailable = event => { if (event.data?.size) voiceChunks.push(event.data); };
+    voiceRecorder.onerror = () => { chatNote.textContent = "Recording failed. Try again."; stopVoiceCapture(); };
+    voiceRecorder.onstop = async () => {
+      clearTimeout(voiceTimer); voiceRecordBtn.classList.remove("recording"); voiceRecordBtn.textContent = "🎙";
+      if (voiceStream) voiceStream.getTracks().forEach(track => track.stop()); voiceStream = null;
+      const blob = new Blob(voiceChunks, { type: voiceRecorder?.mimeType || "audio/webm" });
+      voiceChunks = [];
+      if (!blob.size) return;
+      if (blob.size > 300000) { chatNote.textContent = "That note was too large. Try a shorter recording."; return; }
+      const reader = new FileReader();
+      reader.onload = () => { const data = String(reader.result || ""); if (data.length > 420000) { chatNote.textContent = "That note was too large. Try a shorter recording."; return; } if (chatSend({ type: "voice-note", data })) addChatBubble({ audioData: data, from: role, at: Date.now() }); };
+      reader.readAsDataURL(blob); chatNote.textContent = "Voice note ready to send…";
+    };
+    voiceRecorder.start(250); voiceRecordBtn.classList.add("recording"); voiceRecordBtn.textContent = "■";
+    chatNote.textContent = "Recording… tap ■ to send (max 15 seconds).";
+    voiceTimer = setTimeout(stopVoiceCapture, 15000);
+  } catch (error) {
+    if (voiceStream) voiceStream.getTracks().forEach(track => track.stop()); voiceStream = null;
+    chatNote.textContent = error?.name === "NotAllowedError" ? "Microphone permission was denied." : "Could not start recording. Check microphone access.";
+  }
+}
+function stopVoiceCapture() {
+  clearTimeout(voiceTimer);
+  if (voiceRecorder && voiceRecorder.state !== "inactive") voiceRecorder.stop();
+  else { if (voiceStream) voiceStream.getTracks().forEach(track => track.stop()); voiceStream = null; voiceRecordBtn.classList.remove("recording"); voiceRecordBtn.textContent = "🎙"; }
+}
+voiceRecordBtn.addEventListener("click", () => {
+  if (voiceRecorder && voiceRecorder.state === "recording") stopVoiceCapture(); else startVoiceNote();
+});
+
+function syncChatVisibility() {
+  const connectedScreen = role && roomCode && (controllerScreen.classList.contains("active") || receiverScreen.classList.contains("active") || homeScreen.classList.contains("active"));
+  privateChatToggle.classList.toggle("visible", !!connectedScreen);
+}
+const screenObserver = new MutationObserver(syncChatVisibility);
+[homeScreen, controllerScreen, receiverScreen].forEach(screen => screenObserver.observe(screen, { attributes: true, attributeFilter: ["class"] }));
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+
+    shouldReconnect = false;
+
+
+    clearTimeout(
+      reconnectTimer
+    );
+
+
+    stopVibration();
+
+
+    if (
+      socket
+    ) {
+
+      socket.close();
+
+    }
+
+  }
+);
+
+currentPattern =
+  "continuous";
+
+
+modeSelect.value =
+  "continuous";
+
+
+resizeCanvas();
+
+/*
+   We intentionally DO NOT connect here.
+
+   The socket is opened when the user presses
+   Create Room or Join Room.
+*/
+
+</script>
+
+</body>
+</html>
