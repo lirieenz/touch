@@ -1,3 +1,4 @@
+
 "use strict";
 
 const http = require("http");
@@ -9,9 +10,10 @@ const PORT = process.env.PORT || 3000;
 const RECONNECT_TIME = 30000;
 const MAX_MESSAGE_LENGTH = 1200;
 const MAX_VOICE_DATA_LENGTH = 450000;
-const MAX_PAYLOAD = 8 * 1024 * 1024
-
+const MAX_MEDIA_DATA_LENGTH = 7 * 1024 * 1024;
+const MAX_PAYLOAD = 8 * 1024 * 1024;
 const BASE_DIR = path.resolve(__dirname);
+const INDEX_FILE = path.join(BASE_DIR, "index.html");
 
 const server = http.createServer((req, res) => {
   let pathname;
@@ -32,7 +34,7 @@ const server = http.createServer((req, res) => {
   const file = path.resolve(BASE_DIR, relativePath);
 
   if (
-    file !== path.join(BASE_DIR, "index.html") &&
+    file !== INDEX_FILE &&
     !file.startsWith(BASE_DIR + path.sep)
   ) {
     res.writeHead(403);
@@ -53,17 +55,19 @@ const server = http.createServer((req, res) => {
       ".html": "text/html; charset=utf-8",
       ".css": "text/css; charset=utf-8",
       ".js": "text/javascript; charset=utf-8",
-      ".json": "application/json; charset=utf-8",
+      ".json": "application/json",
       ".png": "image/png",
       ".jpg": "image/jpeg",
       ".jpeg": "image/jpeg",
+      ".webp": "image/webp",
       ".svg": "image/svg+xml",
       ".ico": "image/x-icon"
     };
 
     res.writeHead(200, {
       "Content-Type": types[ext] || "application/octet-stream",
-      "X-Content-Type-Options": "nosniff"
+      "X-Content-Type-Options": "nosniff",
+      "Cache-Control": "no-store"
     });
 
     res.end(data);
@@ -76,9 +80,9 @@ const wss = new WebSocket.Server({
 });
 
 /*
- * Rooms contain only the two active connections and connection
- * state. Chat messages and voice notes are never added to a room,
- * database, or server-side chat history.
+ * Rooms keep only active connections and reconnect state.
+ * Chat messages, voice notes, photos, and videos are relayed
+ * directly to the other participant and are not saved as history.
  */
 const rooms = new Map();
 
@@ -142,13 +146,17 @@ function clearRoomTimer(room) {
 
 function notifyPartner(room, socket, message) {
   const other = getPartner(room, socket);
+
   if (other && other.readyState === WebSocket.OPEN) {
     sendJson(other, message);
   }
 }
 
-/* PRIVATE CHAT: RELAY ONLY, NO SERVER-SIDE HISTORY */
+function getSenderName(socket) {
+  return socket.partner === "A" ? "benz :p" : "thea :p";
+}
 
+/* PRIVATE CHAT: RELAY ONLY, NO SERVER-SIDE HISTORY */
 function handleChatMessage(socket, message) {
   const room = getRoomForSocket(socket);
 
@@ -164,6 +172,7 @@ function handleChatMessage(socket, message) {
     return;
   }
 
+  const from = getSenderName(socket);
   let outgoing;
 
   if (message.type === "chat-message") {
@@ -175,23 +184,8 @@ function handleChatMessage(socket, message) {
 
     outgoing = {
       type: "chat-message",
-      from: socket.partner === "A" ? "benz :p" : "thea :p",
+      from,
       text
-    };
-  } else if (message.type === "chat-signal") {
-    const allowedSignals = [
-      "miss-you",
-      "kiss",
-      "hug",
-      "heartbeat"
-    ];
-
-    if (!allowedSignals.includes(message.signal)) return;
-
-    outgoing = {
-      type: "chat-signal",
-      from: socket.partner === "A" ? "benz :p" : "thea :p",
-      signal: message.signal
     };
   } else if (message.type === "voice-note") {
     if (
@@ -199,18 +193,19 @@ function handleChatMessage(socket, message) {
       message.data.length < 1 ||
       message.data.length > MAX_VOICE_DATA_LENGTH
     ) {
+      sendError(socket, "Voice note is too large.");
       return;
     }
 
     const mime =
       typeof message.mime === "string" &&
-      /^audio\/(webm|ogg|mp4|mpeg)(;[\w=.-]+)?$/i.test(message.mime)
+      /^audio\/(webm|ogg|mp4|mpeg|wav|x-wav)(;[\w=.-]+)?$/i.test(message.mime)
         ? message.mime.slice(0, 80)
         : "audio/webm";
 
     outgoing = {
       type: "voice-note",
-      from: socket.partner === "A" ? "benz :p" : "thea :p",
+      from,
       data: message.data,
       mime,
       duration: Math.min(
@@ -218,15 +213,61 @@ function handleChatMessage(socket, message) {
         Math.max(0, Number(message.duration) || 0)
       )
     };
+  } else if (message.type === "chat-media") {
+    if (
+      typeof message.data !== "string" ||
+      message.data.length < 1 ||
+      message.data.length > MAX_MEDIA_DATA_LENGTH
+    ) {
+      sendError(socket, "Media attachment is too large to send.");
+      return;
+    }
+
+    const mediaType = message.mediaType;
+
+    if (mediaType !== "image" && mediaType !== "video") {
+      sendError(socket, "Unsupported media type.");
+      return;
+    }
+
+    const mime = typeof message.mime === "string"
+      ? message.mime.slice(0, 80).toLowerCase()
+      : "";
+
+    const allowedImageMime = /^image\/(jpeg|png|webp|gif)$/i.test(mime);
+    const allowedVideoMime = /^video\/(mp4|webm|quicktime|3gpp|x-m4v)$/i.test(mime);
+
+    if (
+      (mediaType === "image" && !allowedImageMime) ||
+      (mediaType === "video" && !allowedVideoMime)
+    ) {
+      sendError(socket, "This media format is not supported.");
+      return;
+    }
+
+    const name = typeof message.name === "string"
+      ? message.name.replace(/[<>"]/g, "").slice(0, 100)
+      : mediaType === "image" ? "photo.jpg" : "video.mp4";
+
+    outgoing = {
+      type: "chat-media",
+      from,
+      mediaType,
+      mime,
+      name,
+      data: message.data
+    };
   } else if (message.type === "chat-clear") {
-    outgoing = { type: "chat-cleared" };
+    outgoing = {
+      type: "chat-cleared"
+    };
   } else {
     return;
   }
 
   /*
-   * Forward the message directly to the other member of this room.
-   * Do not keep a copy in the room object or log its contents.
+   * Forward directly to the other participant.
+   * Do not store message contents in the room or log them.
    */
   if (!sendJson(other, outgoing)) {
     sendError(socket, "Your partner is offline. Message not sent.");
@@ -246,7 +287,6 @@ wss.on("connection", socket => {
     if (!message || typeof message.type !== "string") return;
 
     /* CREATE ROOM */
-
     if (message.type === "create") {
       const code = makeCode();
 
@@ -270,12 +310,10 @@ wss.on("connection", socket => {
     }
 
     /* JOIN ROOM */
-
     if (message.type === "join") {
-      const code =
-        typeof message.code === "string"
-          ? message.code.trim().toUpperCase()
-          : "";
+      const code = typeof message.code === "string"
+        ? message.code.trim().toUpperCase()
+        : "";
 
       const room = rooms.get(code);
 
@@ -312,12 +350,10 @@ wss.on("connection", socket => {
     }
 
     /* RECONNECT */
-
     if (message.type === "reconnect") {
-      const code =
-        typeof message.code === "string"
-          ? message.code.trim().toUpperCase()
-          : "";
+      const code = typeof message.code === "string"
+        ? message.code.trim().toUpperCase()
+        : "";
 
       const requestedRole = message.role;
       const room = rooms.get(code);
@@ -361,7 +397,6 @@ wss.on("connection", socket => {
     }
 
     /* CONTROLLER TO RECEIVER */
-
     if (message.type === "control") {
       const room = getRoomForSocket(socket);
 
@@ -374,9 +409,7 @@ wss.on("connection", socket => {
         intensity: Number.isFinite(intensity)
           ? Math.max(0, Math.min(1, intensity))
           : 0,
-        pattern: message.pattern === "pulse"
-          ? "pulse"
-          : "continuous"
+        pattern: message.pattern === "pulse" ? "pulse" : "continuous"
       });
 
       return;
@@ -407,11 +440,10 @@ wss.on("connection", socket => {
     }
 
     /* BIDIRECTIONAL PRIVATE CHAT */
-
     if (
       message.type === "chat-message" ||
-      message.type === "chat-signal" ||
       message.type === "voice-note" ||
+      message.type === "chat-media" ||
       message.type === "chat-clear"
     ) {
       handleChatMessage(socket, message);
@@ -437,9 +469,7 @@ wss.on("connection", socket => {
       wasCurrentSocket = true;
     }
 
-    /*
-     * Ignore the close event of an old socket replaced by a reconnect.
-     */
+    /* Ignore close events from old sockets replaced by reconnects. */
     if (!wasCurrentSocket) return;
 
     notifyPartner(room, socket, {
@@ -468,7 +498,7 @@ wss.on("connection", socket => {
   });
 
   socket.on("error", () => {
-    /* Socket errors are handled by the connection closing. */
+    /* The connection close handler handles cleanup. */
   });
 });
 

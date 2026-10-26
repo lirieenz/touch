@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,58 +11,46 @@
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  -webkit-user-select: none;
 }
-
 html, body {
   margin: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
   background: #000;
-  color: white;
+  color: #fff;
   font-family: Arial, Helvetica, sans-serif;
 }
-
 body { touch-action: none; }
-
 button, input, select, textarea { font: inherit; }
-
 button { cursor: pointer; }
-
 .screen {
   width: 100%;
   height: 100%;
   display: none;
   position: relative;
 }
-
 .screen.active { display: flex; }
 
 /* HOME */
-
 #homeScreen {
   align-items: center;
   justify-content: center;
   flex-direction: column;
   padding: 25px;
 }
-
 .title {
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 8px;
   text-align: center;
 }
-
 .subtitle {
   color: #999;
   font-size: 14px;
   margin-bottom: 35px;
   text-align: center;
 }
-
 .home-card {
   width: min(420px, 100%);
   background: #111;
@@ -69,54 +58,37 @@ button { cursor: pointer; }
   border-radius: 18px;
   padding: 25px;
 }
-
-.home-card h2 {
-  margin: 0 0 18px;
-  font-size: 20px;
-}
-
+.home-card h2 { margin: 0 0 18px; font-size: 20px; }
 .input-label {
   display: block;
   font-size: 12px;
   color: #999;
   margin-bottom: 7px;
 }
-
 input, select {
   width: 100%;
   height: 48px;
   background: #181818;
-  color: white;
+  color: #fff;
   border: 1px solid #333;
   border-radius: 10px;
   padding: 0 14px;
   outline: none;
 }
-
 input:focus, select:focus { border-color: #666; }
-
 .field { margin-bottom: 15px; }
-
-.button-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
-}
-
+.button-row { display: flex; gap: 10px; margin-top: 18px; }
 .btn {
   flex: 1;
   height: 48px;
   border: none;
   border-radius: 10px;
   font-weight: 700;
-  color: white;
+  color: #fff;
   background: #222;
 }
-
 .btn.primary { background: #e50914; }
-
-.btn:active { transform: scale(0.98); }
-
+.btn:active { transform: scale(.98); }
 .status {
   text-align: center;
   color: #777;
@@ -124,7 +96,6 @@ input:focus, select:focus { border-color: #666; }
   margin-top: 18px;
   min-height: 16px;
 }
-
 .room-code {
   margin-top: 15px;
   padding: 15px;
@@ -133,34 +104,13 @@ input:focus, select:focus { border-color: #666; }
   text-align: center;
   display: none;
 }
-
 .room-code.visible { display: block; }
-
-.room-code-label {
-  color: #777;
-  font-size: 10px;
-  margin-bottom: 7px;
-}
-
-.room-code-value {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 5px;
-}
-
-.room-code-hint {
-  color: #666;
-  font-size: 11px;
-  margin-top: 7px;
-}
+.room-code-label { color: #777; font-size: 10px; margin-bottom: 7px; }
+.room-code-value { font-size: 28px; font-weight: 700; letter-spacing: 5px; }
+.room-code-hint { color: #666; font-size: 11px; margin-top: 7px; }
 
 /* CONTROLLER */
-
-#controllerScreen {
-  background: #000;
-  flex-direction: column;
-}
-
+#controllerScreen { background: #000; flex-direction: column; }
 #controllerCanvas {
   position: absolute;
   inset: 0;
@@ -169,7 +119,6 @@ input:focus, select:focus { border-color: #666; }
   z-index: 1;
   touch-action: none;
 }
-
 .controller-top {
   position: absolute;
   z-index: 5;
@@ -181,9 +130,8 @@ input:focus, select:focus { border-color: #666; }
   align-items: center;
   pointer-events: none;
 }
-
 .connection-pill {
-  background: rgba(20, 20, 20, 0.85);
+  background: rgba(20,20,20,.85);
   border: 1px solid #292929;
   border-radius: 999px;
   padding: 8px 12px;
@@ -191,9 +139,7 @@ input:focus, select:focus { border-color: #666; }
   color: #aaa;
   pointer-events: auto;
 }
-
 .connection-pill.connected { color: #8cff9a; }
-
 .controller-controls {
   position: absolute;
   z-index: 5;
@@ -204,25 +150,17 @@ input:focus, select:focus { border-color: #666; }
   gap: 10px;
   align-items: center;
 }
-
-.mode-select {
-  flex: 1;
-  height: 46px;
-  background: rgba(20, 20, 20, 0.92);
-}
-
+.mode-select { flex: 1; height: 46px; background: rgba(20,20,20,.92); }
 .heart-btn {
   width: 52px;
   height: 46px;
   border: none;
   border-radius: 10px;
   background: #222;
-  color: white;
+  color: #fff;
   font-size: 23px;
 }
-
-.heart-btn:active { transform: scale(0.94); }
-
+.heart-btn:active { transform: scale(.94); }
 .finger-info {
   position: absolute;
   z-index: 5;
@@ -234,14 +172,12 @@ input:focus, select:focus { border-color: #666; }
 }
 
 /* RECEIVER */
-
 #receiverScreen {
   background: #000;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 }
-
 .receiver-status {
   position: absolute;
   top: 20px;
@@ -252,30 +188,26 @@ input:focus, select:focus { border-color: #666; }
   font-size: 11px;
   z-index: 3;
 }
-
 .receiver-heart {
   position: absolute;
   font-size: 110px;
   opacity: 0;
-  transform: scale(0.5);
+  transform: scale(.5);
   pointer-events: none;
   z-index: 10;
 }
-
-.receiver-heart.show { animation: heartPop 0.7s ease-out; }
-
+.receiver-heart.show { animation: heartPop .7s ease-out; }
 @keyframes heartPop {
-  0% { opacity: 0; transform: scale(0.4); }
+  0% { opacity: 0; transform: scale(.4); }
   25% { opacity: 1; transform: scale(1.15); }
   60% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(1.35); }
 }
-
 .lock-overlay {
   position: absolute;
   inset: 0;
   z-index: 50;
-  background: rgba(0, 0, 0, 0.96);
+  background: rgba(0,0,0,.96);
   display: none;
   align-items: center;
   justify-content: center;
@@ -283,32 +215,22 @@ input:focus, select:focus { border-color: #666; }
   text-align: center;
   padding: 25px;
 }
-
 .lock-overlay.active { display: flex; }
-
 .lock-icon { font-size: 52px; margin-bottom: 15px; }
-
-.lock-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
+.lock-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
 .lock-text {
   color: #777;
   font-size: 13px;
   line-height: 1.5;
   margin-bottom: 25px;
 }
-
 .unlock-btn {
   background: #222;
   border: 1px solid #333;
-  color: white;
+  color: #fff;
   padding: 12px 22px;
   border-radius: 10px;
 }
-
 .receiver-bottom {
   position: absolute;
   bottom: 20px;
@@ -321,7 +243,6 @@ input:focus, select:focus { border-color: #666; }
 }
 
 /* CONNECTING */
-
 .connecting {
   position: fixed;
   inset: 0;
@@ -333,25 +254,20 @@ input:focus, select:focus { border-color: #666; }
   flex-direction: column;
   text-align: center;
 }
-
 .connecting.active { display: flex; }
-
 .spinner {
   width: 28px;
   height: 28px;
   border: 3px solid #222;
-  border-top-color: white;
+  border-top-color: #fff;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin .8s linear infinite;
   margin-bottom: 18px;
 }
-
 @keyframes spin { to { transform: rotate(360deg); } }
-
 .connecting-text { color: #888; font-size: 13px; }
 
 /* PRIVATE CHAT */
-
 .companion-launcher {
   position: fixed;
   z-index: 70;
@@ -370,9 +286,7 @@ input:focus, select:focus { border-color: #666; }
   justify-content: center;
   touch-action: manipulation;
 }
-
 .companion-launcher.visible { display: flex; }
-
 .companion-panel {
   position: fixed;
   z-index: 80;
@@ -389,20 +303,16 @@ input:focus, select:focus { border-color: #666; }
   box-shadow: 0 12px 40px #000c;
   touch-action: auto;
 }
-
 .companion-panel.open { display: flex; }
-
 .companion-panel, .companion-panel * {
   user-select: text;
   -webkit-user-select: text;
 }
-
 .companion-panel button {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
 }
-
 .companion-header {
   display: flex;
   align-items: center;
@@ -412,17 +322,9 @@ input:focus, select:focus { border-color: #666; }
   border-bottom: 1px solid #242424;
   background: #101010;
 }
-
 .companion-heading { font-weight: 700; font-size: 14px; }
-
-.companion-subheading {
-  color: #777;
-  font-size: 10px;
-  margin-top: 3px;
-}
-
+.companion-subheading { color: #777; font-size: 10px; margin-top: 3px; }
 .companion-header-actions { display: flex; gap: 6px; }
-
 .chat-tool {
   border: 1px solid #333;
   background: #191919;
@@ -431,32 +333,7 @@ input:focus, select:focus { border-color: #666; }
   padding: 7px 9px;
   font-size: 11px;
 }
-
 .chat-tool.danger { color: #ff737a; }
-
-.flirty-signals {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-  padding: 10px;
-  border-bottom: 1px solid #202020;
-}
-
-.signal-btn {
-  border: 1px solid #342020;
-  border-radius: 10px;
-  padding: 9px 3px;
-  background: #171010;
-  color: #f3b3b6;
-  font-size: 11px;
-}
-
-.signal-btn span {
-  display: block;
-  font-size: 18px;
-  margin-bottom: 4px;
-}
-
 .chat-messages {
   flex: 1;
   min-height: 0;
@@ -468,7 +345,6 @@ input:focus, select:focus { border-color: #666; }
   overscroll-behavior: contain;
   touch-action: pan-y;
 }
-
 .chat-empty {
   color: #666;
   font-size: 12px;
@@ -476,7 +352,6 @@ input:focus, select:focus { border-color: #666; }
   margin: auto 12px;
   line-height: 1.6;
 }
-
 .chat-bubble {
   max-width: 88%;
   align-self: flex-start;
@@ -490,32 +365,27 @@ input:focus, select:focus { border-color: #666; }
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
-
 .chat-bubble.mine {
   align-self: flex-end;
   background: #321315;
   border-color: #572226;
   border-radius: 13px 13px 4px 13px;
 }
-
 .chat-meta { color: #888; font-size: 9px; margin-bottom: 4px; }
-
 .chat-bubble audio {
   display: block;
   width: min(240px, 68vw);
   max-width: 100%;
   height: 36px;
 }
-
 .chat-composer {
   display: flex;
   align-items: flex-end;
-  gap: 7px;
+  gap: 6px;
   padding: 10px;
   border-top: 1px solid #242424;
   background: #101010;
 }
-
 .chat-input {
   flex: 1;
   min-width: 0;
@@ -532,35 +402,22 @@ input:focus, select:focus { border-color: #666; }
   user-select: text;
   -webkit-user-select: text;
 }
-
 .chat-input:focus { border-color: #8d3037; }
-
-.chat-send, .chat-record {
-  width: 40px;
+.chat-send, .chat-record, .chat-attach {
+  width: 39px;
   height: 40px;
-  flex: 0 0 40px;
+  flex: 0 0 39px;
   border: 0;
   border-radius: 12px;
   background: #e3343e;
   color: #fff;
   font-size: 17px;
 }
-
-.chat-record { background: #242424; border: 1px solid #383838; }
-
-.chat-record.recording {
-  background: #e3343e;
-  animation: recordPulse 1s infinite;
+.chat-record, .chat-attach {
+  background: #242424;
+  border: 1px solid #383838;
 }
-
-.chat-footnote {
-  padding: 0 11px 9px;
-  color: #626262;
-  background: #101010;
-  font-size: 9px;
-  line-height: 1.4;
-}
-
+.chat-record.recording { background: #e3343e; animation: recordPulse 1s infinite; }
 .chat-status {
   color: #e88b90;
   font-size: 10px;
@@ -568,13 +425,73 @@ input:focus, select:focus { border-color: #666; }
   padding: 0 11px 5px;
   background: #101010;
 }
-
+.chat-footnote {
+  padding: 0 11px 9px;
+  color: #626262;
+  background: #101010;
+  font-size: 9px;
+  line-height: 1.4;
+}
 .discreet .chat-bubble .chat-content { filter: blur(7px); }
-
 .discreet .chat-bubble:hover .chat-content,
 .discreet .chat-bubble:active .chat-content { filter: none; }
-
 @keyframes recordPulse { 50% { opacity: .55; } }
+
+/* MEDIA ATTACHMENTS: PREVIEW ONLY AFTER CLICK */
+.media-attachment {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 175px;
+  max-width: 240px;
+  padding: 12px;
+  background: #202020;
+  border: 1px solid #3a3a3a;
+  color: #fff;
+  border-radius: 10px;
+  text-align: left;
+}
+.mine .media-attachment { background: #481b20; border-color: #6a292f; }
+.media-attachment-icon { font-size: 25px; }
+.media-attachment-title { font-size: 12px; font-weight: 700; }
+.media-attachment-hint { font-size: 10px; color: #aaa; margin-top: 4px; }
+.media-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0,0,0,.94);
+  touch-action: manipulation;
+}
+.media-preview.open { display: flex; }
+.media-preview-content {
+  width: min(700px, 100%);
+  max-height: 90dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.media-preview img, .media-preview video {
+  display: block;
+  max-width: 100%;
+  max-height: 78dvh;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #111;
+}
+.media-preview-close {
+  align-self: flex-end;
+  border: 1px solid #444;
+  background: #222;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.hidden-file { display: none; }
 
 @media (max-width: 420px) {
   .companion-panel {
@@ -583,58 +500,46 @@ input:focus, select:focus { border-color: #666; }
     width: calc(100vw - 16px);
     height: min(560px, calc(100dvh - 100px));
   }
-
   .companion-launcher { right: 12px; bottom: 12px; }
 }
 </style>
 </head>
 
 <body>
-
 <div id="homeScreen" class="screen active">
-  <div class="title"></div>
-
   <div class="home-card">
     <h2>Connect</h2>
-
     <div class="field">
       <label class="input-label" for="roomInput">Room Code</label>
-      <input id="roomInput" type="text" maxlength="6"
-        placeholder="Enter room code" autocomplete="off"
-        autocapitalize="characters">
+      <input id="roomInput" type="text" maxlength="6" placeholder="Enter room code"
+        autocomplete="off" autocapitalize="characters">
     </div>
-
     <div class="button-row">
-      <button id="createBtn" class="btn primary">Create Room</button>
-      <button id="joinBtn" class="btn">Join Room</button>
+      <button id="createBtn" class="btn primary" type="button">Create Room</button>
+      <button id="joinBtn" class="btn" type="button">Join Room</button>
     </div>
-
     <div id="homeStatus" class="status">Connecting...</div>
-
     <div id="roomCodeBox" class="room-code">
       <div class="room-code-label">YOUR ROOM CODE</div>
       <div id="roomCodeValue" class="room-code-value"></div>
-      <div class="room-code-hint">Give this code to thea</div>
+      <div class="room-code-hint">Share this code with your partner</div>
     </div>
   </div>
 </div>
 
 <div id="controllerScreen" class="screen">
   <canvas id="controllerCanvas"></canvas>
-
   <div class="controller-top">
     <div id="controllerConnection" class="connection-pill">● CONNECTING</div>
     <div id="controllerRoom" class="connection-pill">ROOM ------</div>
   </div>
-
   <div id="fingerInfo" class="finger-info">Intensity: 0%</div>
-
   <div class="controller-controls">
     <select id="modeSelect" class="mode-select">
       <option value="continuous">Continuous</option>
       <option value="pulse">Pulse / Heartbeat</option>
     </select>
-    <button id="heartBtn" class="heart-btn" aria-label="Send heartbeat">♥</button>
+    <button id="heartBtn" class="heart-btn" type="button" aria-label="Send heartbeat">♥</button>
   </div>
 </div>
 
@@ -642,28 +547,22 @@ input:focus, select:focus { border-color: #666; }
   <div id="receiverStatus" class="receiver-status">● HAPTICS READY</div>
   <div id="receiverHeart" class="receiver-heart">♥</div>
   <div class="receiver-bottom">RECEIVER</div>
-
   <div id="lockOverlay" class="lock-overlay">
     <div class="lock-icon">🔒</div>
     <div class="lock-title">Touch Locked</div>
-    <div class="lock-text">
-      The receiver screen is locked so accidental touches
-      won't interfere with the connection.
-    </div>
-    <button id="unlockBtn" class="unlock-btn">Hold to Unlock</button>
+    <div class="lock-text">The receiver screen is locked so accidental touches won't interfere with the connection.</div>
+    <button id="unlockBtn" class="unlock-btn" type="button">Hold to Unlock</button>
   </div>
 </div>
 
-<button id="companionLauncher" class="companion-launcher"
-  type="button" aria-label="Open private chat">♡</button>
+<button id="companionLauncher" class="companion-launcher" type="button" aria-label="Open private chat">♡</button>
 
 <section id="companionPanel" class="companion-panel" aria-label="Private chat">
   <div class="companion-header">
     <div>
-      <div class="companion-heading">Just Us <span aria-hidden="true">♥</span></div>
+      <div class="companion-heading">Private Chat</div>
       <div id="chatConnectionLabel" class="companion-subheading">Join a room to chat</div>
     </div>
-
     <div class="companion-header-actions">
       <button id="discreetBtn" class="chat-tool" type="button">Discreet</button>
       <button id="clearChatBtn" class="chat-tool danger" type="button">Clear</button>
@@ -671,32 +570,34 @@ input:focus, select:focus { border-color: #666; }
     </div>
   </div>
 
-  <div class="flirty-signals">
-    <button class="signal-btn" type="button" data-signal="miss-you"><span>💌</span>Miss you</button>
-    <button class="signal-btn" type="button" data-signal="kiss"><span>💋</span>Kiss</button>
-    <button class="signal-btn" type="button" data-signal="hug"><span>🫂</span>Hug</button>
-    <button class="signal-btn" type="button" data-signal="heartbeat"><span>♥</span>Heartbeat</button>
-  </div>
-
   <div id="chatMessages" class="chat-messages" aria-live="polite">
-    <div class="chat-empty">Your little corner of the internet. Messages aren't saved by the server.</div>
+    <div class="chat-empty">Messages, voice notes, photos and videos appear here. Tap a media attachment to open it.</div>
   </div>
 
   <div id="chatStatus" class="chat-status"></div>
 
   <form id="chatForm" class="chat-composer">
     <textarea id="chatInput" class="chat-input" rows="1" maxlength="1200"
-      placeholder="Say something sweet…" aria-label="Message"></textarea>
-    <button id="recordBtn" class="chat-record" type="button"
-      aria-label="Record a voice note" title="Record up to 15 seconds">🎙</button>
+      placeholder="Write a message..." aria-label="Message"></textarea>
+
+    <button id="photoBtn" class="chat-attach" type="button" aria-label="Take or choose a photo" title="Photo">▧</button>
+    <button id="videoBtn" class="chat-attach" type="button" aria-label="Take or choose a video" title="Video">▶</button>
+    <button id="recordBtn" class="chat-record" type="button" aria-label="Record a voice note" title="Record up to 15 seconds">🎙</button>
     <button class="chat-send" type="submit" aria-label="Send message">➤</button>
   </form>
 
-  <div class="chat-footnote">
-    Voice notes max 15 sec. No chat history is stored by the server.
-    Clear this screen before closing if you share a device.
-  </div>
+  <input id="photoInput" class="hidden-file" type="file" accept="image/*" capture="environment">
+  <input id="videoInput" class="hidden-file" type="file" accept="video/*" capture="environment">
+
+  <div class="chat-footnote">Photos and videos are sent as attachments. Tap one to view it. Media limit: 5 MB per file. Chat history is not stored by the server.</div>
 </section>
+
+<div id="mediaPreview" class="media-preview" role="dialog" aria-modal="true" aria-label="Media preview">
+  <div class="media-preview-content">
+    <button id="closeMediaPreview" class="media-preview-close" type="button">Close ✕</button>
+    <div id="mediaPreviewBody"></div>
+  </div>
+</div>
 
 <div id="connectingOverlay" class="connecting">
   <div class="spinner"></div>
@@ -748,20 +649,28 @@ const recordBtn = $("recordBtn");
 const discreetBtn = $("discreetBtn");
 const clearChatBtn = $("clearChatBtn");
 const closeChatBtn = $("closeChatBtn");
+const photoBtn = $("photoBtn");
+const videoBtn = $("videoBtn");
+const photoInput = $("photoInput");
+const videoInput = $("videoInput");
+const mediaPreview = $("mediaPreview");
+const mediaPreviewBody = $("mediaPreviewBody");
+const closeMediaPreview = $("closeMediaPreview");
 
 let discreetMode = false;
 let mediaRecorder = null;
 let recordedChunks = [];
 let recordLimitTimer = null;
 let recordingStartedAt = 0;
-let localVoiceUrls = [];
+let localObjectUrls = [];
 
+const MAX_MEDIA_BYTES = 5 * 1024 * 1024;
+const MAX_MEDIA_DATA_LENGTH = 7 * 1024 * 1024;
 const ctx = controllerCanvas.getContext("2d");
 
 let drawing = false;
 let canvasWidth = 0;
 let canvasHeight = 0;
-
 let currentPattern = "continuous";
 let targetIntensity = 0;
 let pulseTimer = null;
@@ -770,61 +679,40 @@ let hapticsRunning = false;
 let hapticsArmed = false;
 let wakeLock = null;
 
-const signalCopy = {
-  "miss-you": "💌 I'm missing you",
-  "kiss": "💋 Sending you a kiss",
-  "hug": "🫂 You get a big hug",
-  "heartbeat": "♥ A little heartbeat for you"
-};
-
 function showScreen(screen) {
   homeScreen.classList.remove("active");
   controllerScreen.classList.remove("active");
   receiverScreen.classList.remove("active");
   screen.classList.add("active");
 }
-
 function showConnecting(text) {
   connectingText.textContent = text;
   connectingOverlay.classList.add("active");
 }
-
 function hideConnecting() {
   connectingOverlay.classList.remove("active");
 }
-
 function getWebSocketURL() {
   const protocol = location.protocol === "https:" ? "wss:" : "ws:";
   return protocol + "//" + location.host;
 }
-
 function chatIsConnected() {
-  return !!(
-    socket &&
-    socket.readyState === WebSocket.OPEN &&
-    role &&
-    roomCode
-  );
+  return !!(socket && socket.readyState === WebSocket.OPEN && role && roomCode);
 }
-
 function updateChatAvailability() {
   const ready = !!role && !!roomCode;
   companionLauncher.classList.toggle("visible", ready);
-
   chatConnectionLabel.textContent = !ready
     ? "Join a room to chat"
     : chatIsConnected()
       ? "Room " + roomCode + " · connected"
       : "Room " + roomCode + " · reconnecting";
 }
-
 function setChatStatus(text) {
   chatStatus.textContent = text || "";
 }
-
 function sendJson(payload) {
   if (!socket || socket.readyState !== WebSocket.OPEN) return false;
-
   try {
     socket.send(JSON.stringify(payload));
     return true;
@@ -834,11 +722,10 @@ function sendJson(payload) {
 }
 
 function connectSocket() {
-  if (
-    socket &&
-    (socket.readyState === WebSocket.OPEN ||
-     socket.readyState === WebSocket.CONNECTING)
-  ) return;
+  if (socket && (
+    socket.readyState === WebSocket.OPEN ||
+    socket.readyState === WebSocket.CONNECTING
+  )) return;
 
   socket = new WebSocket(getWebSocketURL());
 
@@ -849,34 +736,20 @@ function connectSocket() {
     if (pendingAction) {
       const action = pendingAction;
       pendingAction = null;
-
-      if (action.type === "create") {
-        sendJson({ type: "create" });
-      } else if (action.type === "join") {
-        sendJson({ type: "join", code: action.code });
-      }
-
+      if (action.type === "create") sendJson({ type: "create" });
+      else if (action.type === "join") sendJson({ type: "join", code: action.code });
       return;
     }
 
     if (role && roomCode) {
-      sendJson({
-        type: "reconnect",
-        code: roomCode,
-        role
-      });
+      sendJson({ type: "reconnect", code: roomCode, role });
     }
   });
 
   socket.addEventListener("message", event => {
     let message;
-
-    try {
-      message = JSON.parse(event.data);
-    } catch {
-      return;
-    }
-
+    try { message = JSON.parse(event.data); }
+    catch { return; }
     handleMessage(message);
   });
 
@@ -888,12 +761,10 @@ function connectSocket() {
       controllerConnection.textContent = "● DISCONNECTED";
       controllerConnection.classList.remove("connected");
     }
-
     if (role === "B") {
       receiverStatus.textContent = "● RECONNECTING...";
       stopVibration();
     }
-
     if (shouldReconnect) scheduleReconnect();
   });
 
@@ -905,7 +776,6 @@ function connectSocket() {
 
 function scheduleReconnect() {
   if (reconnectTimer) return;
-
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
     connectSocket();
@@ -920,7 +790,7 @@ function handleMessage(message) {
       shouldReconnect = true;
       roomCodeValue.textContent = roomCode;
       roomCodeBox.classList.add("visible");
-      homeStatus.textContent = "Waiting for thea ...";
+      homeStatus.textContent = "Waiting for your partner...";
       break;
 
     case "joined":
@@ -935,7 +805,7 @@ function handleMessage(message) {
 
     case "partner-joined":
       if (role === "A") {
-        homeStatus.textContent = "thea connected.";
+        homeStatus.textContent = "Your partner connected.";
         showConnected();
       }
       break;
@@ -964,7 +834,6 @@ function handleMessage(message) {
         stopVibration();
         receiverStatus.textContent = "● PARTNER DISCONNECTED";
       }
-
       if (role === "A") {
         controllerConnection.textContent = "● PARTNER DISCONNECTED";
         controllerConnection.classList.remove("connected");
@@ -985,25 +854,6 @@ function handleMessage(message) {
       });
       break;
 
-    case "chat-signal": {
-      const labels = {
-        "miss-you": "💌 I'm missing you",
-        "kiss": "💋 Sending you a kiss",
-        "hug": "🫂 You get a big hug",
-        "heartbeat": "♥ A little heartbeat for you"
-      };
-
-      if (labels[message.signal]) {
-        appendChatMessage({
-          from: message.from || "Partner",
-          mine: false,
-          text: labels[message.signal],
-          kind: "signal"
-        });
-      }
-      break;
-    }
-
     case "voice-note":
       if (typeof message.data === "string" && message.data.length <= 450000) {
         appendChatMessage({
@@ -1012,6 +862,25 @@ function handleMessage(message) {
           kind: "voice",
           data: message.data,
           mime: message.mime || "audio/webm"
+        });
+      }
+      break;
+
+    case "chat-media":
+      if (
+        typeof message.data === "string" &&
+        message.data.length > 0 &&
+        message.data.length <= MAX_MEDIA_DATA_LENGTH &&
+        (message.mediaType === "image" || message.mediaType === "video")
+      ) {
+        appendChatMessage({
+          from: message.from || "Partner",
+          mine: false,
+          kind: "media",
+          data: message.data,
+          mime: message.mime || (message.mediaType === "image" ? "image/jpeg" : "video/mp4"),
+          mediaType: message.mediaType,
+          name: String(message.name || "attachment").slice(0, 100)
         });
       }
       break;
@@ -1025,20 +894,19 @@ function handleMessage(message) {
       homeStatus.textContent = message.message || "Something went wrong.";
       if (message.message && message.message.includes("partner is offline")) {
         setChatStatus("Your partner is offline. Message not sent.");
+      } else {
+        setChatStatus(message.message || "Something went wrong.");
       }
       hideConnecting();
 
-      if (
-        !controllerScreen.classList.contains("active") &&
-        !receiverScreen.classList.contains("active")
-      ) {
+      if (!controllerScreen.classList.contains("active") &&
+          !receiverScreen.classList.contains("active")) {
         role = null;
         roomCode = null;
         shouldReconnect = false;
       }
       break;
   }
-
   updateChatAvailability();
 }
 
@@ -1050,26 +918,21 @@ createBtn.addEventListener("click", () => {
 
 joinBtn.addEventListener("click", () => {
   const code = roomInput.value.trim().toUpperCase();
-
   if (!code) {
     homeStatus.textContent = "Enter a room code first.";
     return;
   }
-
   pendingAction = { type: "join", code };
   homeStatus.textContent = "Joining room...";
   connectSocket();
 });
 
 roomInput.addEventListener("input", () => {
-  roomInput.value = roomInput.value
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .toUpperCase();
+  roomInput.value = roomInput.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
 });
 
 function showConnected() {
   hideConnecting();
-
   if (role === "A") {
     showScreen(controllerScreen);
     controllerConnection.textContent = "● CONNECTED";
@@ -1088,28 +951,21 @@ function showConnected() {
 function resizeCanvas() {
   canvasWidth = window.innerWidth;
   canvasHeight = window.innerHeight;
-
   const dpr = Math.max(1, window.devicePixelRatio || 1);
-
   controllerCanvas.width = canvasWidth * dpr;
   controllerCanvas.height = canvasHeight * dpr;
   controllerCanvas.style.width = canvasWidth + "px";
   controllerCanvas.style.height = canvasHeight + "px";
-
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
-
 window.addEventListener("resize", resizeCanvas);
 
 function getIntensity(y) {
   if (canvasHeight <= 0) return 0;
-
   return Math.max(0, Math.min(1, 1 - y / canvasHeight));
 }
-
 function drawFinger(x, y) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
   if (drawing) {
     ctx.beginPath();
     ctx.arc(x, y, 5, 0, Math.PI * 2);
@@ -1117,57 +973,33 @@ function drawFinger(x, y) {
     ctx.fill();
   }
 }
-
 function sendControl(x, y) {
   if (!socket || socket.readyState !== WebSocket.OPEN) return;
-
   targetIntensity = getIntensity(y);
   fingerInfo.textContent = "Intensity: " + Math.round(targetIntensity * 100) + "%";
-
-  sendJson({
-    type: "control",
-    intensity: targetIntensity,
-    pattern: currentPattern
-  });
+  sendJson({ type: "control", intensity: targetIntensity, pattern: currentPattern });
 }
-
 function pointerDown(event) {
   if (event.pointerType === "mouse" && event.button !== 0) return;
-
   drawing = true;
-
-  try {
-    controllerCanvas.setPointerCapture(event.pointerId);
-  } catch {}
-
+  try { controllerCanvas.setPointerCapture(event.pointerId); } catch {}
   drawFinger(event.clientX, event.clientY);
   sendControl(event.clientX, event.clientY);
 }
-
 function pointerMove(event) {
   if (!drawing) return;
-
   drawFinger(event.clientX, event.clientY);
   sendControl(event.clientX, event.clientY);
 }
-
 function pointerUp() {
   if (!drawing) return;
-
   drawing = false;
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   targetIntensity = 0;
-
-  sendJson({
-    type: "control",
-    intensity: 0,
-    pattern: currentPattern
-  });
-
+  sendJson({ type: "control", intensity: 0, pattern: currentPattern });
   sendJson({ type: "stop" });
   fingerInfo.textContent = "Intensity: 0%";
 }
-
 controllerCanvas.addEventListener("pointerdown", pointerDown);
 controllerCanvas.addEventListener("pointermove", pointerMove);
 controllerCanvas.addEventListener("pointerup", pointerUp);
@@ -1178,201 +1010,152 @@ controllerCanvas.addEventListener("pointerleave", event => {
 
 modeSelect.addEventListener("change", () => {
   currentPattern = modeSelect.value;
-
-  sendJson({
-    type: "control",
-    intensity: targetIntensity,
-    pattern: currentPattern
-  });
+  sendJson({ type: "control", intensity: targetIntensity, pattern: currentPattern });
 });
-
-heartBtn.addEventListener("click", () => {
-  sendJson({ type: "heart" });
-});
+heartBtn.addEventListener("click", () => sendJson({ type: "heart" }));
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
-
 function stopVibration() {
   clearTimeout(pulseTimer);
   clearTimeout(continuousTimer);
-
   pulseTimer = null;
   continuousTimer = null;
   hapticsRunning = false;
-
   if ("vibrate" in navigator) navigator.vibrate(0);
 }
-
 function startContinuousVibration() {
   clearTimeout(continuousTimer);
-
   if (targetIntensity <= 0.01) {
     stopVibration();
     return;
   }
-
   hapticsRunning = true;
-
   const intensity = clamp(targetIntensity, 0, 1);
   let duration = 120;
-
-  if (intensity >= 0.75) duration = 1000;
-  else if (intensity >= 0.50) duration = 650;
-  else if (intensity >= 0.25) duration = 350;
-
+  if (intensity >= .75) duration = 1000;
+  else if (intensity >= .50) duration = 650;
+  else if (intensity >= .25) duration = 350;
   if ("vibrate" in navigator) navigator.vibrate(duration);
-
   continuousTimer = setTimeout(() => {
-    if (currentPattern === "continuous" && targetIntensity > 0.01) {
-      startContinuousVibration();
-    } else {
-      stopVibration();
-    }
+    if (currentPattern === "continuous" && targetIntensity > .01) startContinuousVibration();
+    else stopVibration();
   }, Math.max(80, duration - 80));
 }
-
 function startPulseVibration() {
   clearTimeout(pulseTimer);
-
-  if (targetIntensity <= 0.01) {
+  if (targetIntensity <= .01) {
     stopVibration();
     return;
   }
-
   hapticsRunning = true;
-
   const intensity = clamp(targetIntensity, 0, 1);
   const firstBeat = Math.round(70 + intensity * 80);
   const secondBeat = Math.round(35 + intensity * 45);
   const pattern = [firstBeat, 75, secondBeat, 430];
-
   if ("vibrate" in navigator) navigator.vibrate(pattern);
-
   pulseTimer = setTimeout(() => {
-    if (currentPattern === "pulse" && targetIntensity > 0.01) {
-      startPulseVibration();
-    } else if (currentPattern === "continuous" && targetIntensity > 0.01) {
-      startContinuousVibration();
-    } else {
-      stopVibration();
-    }
+    if (currentPattern === "pulse" && targetIntensity > .01) startPulseVibration();
+    else if (currentPattern === "continuous" && targetIntensity > .01) startContinuousVibration();
+    else stopVibration();
   }, pattern.reduce((sum, value) => sum + value, 0));
 }
-
 function receiveControl(message) {
   const previousIntensity = targetIntensity;
-
   targetIntensity = clamp(Number(message.intensity) || 0, 0, 1);
-
   if (message.pattern) {
     const newPattern = message.pattern === "pulse" ? "pulse" : "continuous";
-
     if (newPattern !== currentPattern) {
       currentPattern = newPattern;
       stopVibration();
     }
   }
-
-  if (targetIntensity <= 0.01) {
+  if (targetIntensity <= .01) {
     stopVibration();
     return;
   }
-
   if (currentPattern === "continuous") {
-    if (!hapticsRunning || Math.abs(targetIntensity - previousIntensity) >= 0.02) {
+    if (!hapticsRunning || Math.abs(targetIntensity - previousIntensity) >= .02) {
       startContinuousVibration();
     }
   } else if (!hapticsRunning) {
     startPulseVibration();
   }
 }
-
 function receiveHeart() {
   receiverHeart.classList.remove("show");
   void receiverHeart.offsetWidth;
   receiverHeart.classList.add("show");
-
   if ("vibrate" in navigator) navigator.vibrate([80, 70, 120, 180, 80]);
 }
-
 function armHaptics() {
   if (hapticsArmed) return;
-
   if ("vibrate" in navigator) {
     navigator.vibrate(1);
     navigator.vibrate(0);
   }
-
   hapticsArmed = true;
   receiverStatus.textContent = "● HAPTICS READY";
 }
-
 receiverScreen.addEventListener("pointerdown", armHaptics);
 
 let unlockTimer = null;
-
 function startUnlock() {
   clearTimeout(unlockTimer);
   unlockBtn.textContent = "Keep holding...";
-
   unlockTimer = setTimeout(() => {
     lockOverlay.classList.remove("active");
     unlockBtn.textContent = "Hold to Unlock";
   }, 1500);
 }
-
 function cancelUnlock() {
   clearTimeout(unlockTimer);
   unlockBtn.textContent = "Hold to Unlock";
 }
-
 unlockBtn.addEventListener("pointerdown", startUnlock);
 unlockBtn.addEventListener("pointerup", cancelUnlock);
 unlockBtn.addEventListener("pointercancel", cancelUnlock);
 unlockBtn.addEventListener("pointerleave", cancelUnlock);
-
 function initializeReceiverLock() {
   lockOverlay.classList.add("active");
 }
-
 receiverScreen.addEventListener("touchmove", event => {
   if (lockOverlay.classList.contains("active")) event.preventDefault();
 }, { passive: false });
 
 async function requestWakeLock() {
   try {
-    if ("wakeLock" in navigator) {
-      wakeLock = await navigator.wakeLock.request("screen");
-    }
+    if ("wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen");
   } catch {}
 }
-
 document.addEventListener("visibilitychange", async () => {
-  if (document.visibilityState === "visible" && role) {
-    await requestWakeLock();
-  }
+  if (document.visibilityState === "visible" && role) await requestWakeLock();
 });
 
 /* PRIVATE CHAT */
-
+function releaseObjectUrls() {
+  localObjectUrls.forEach(url => URL.revokeObjectURL(url));
+  localObjectUrls = [];
+}
 function clearChatDisplay(notifyPartner) {
-  localVoiceUrls.forEach(url => URL.revokeObjectURL(url));
-  localVoiceUrls = [];
-
+  releaseObjectUrls();
   chatMessages.replaceChildren();
-
   const empty = document.createElement("div");
   empty.className = "chat-empty";
-  empty.textContent = "Nothing here for now. Start a fresh little conversation.";
+  empty.textContent = "Nothing here for now. Start a fresh conversation.";
   chatMessages.appendChild(empty);
-
-  if (notifyPartner && chatIsConnected()) {
-    sendJson({ type: "chat-clear" });
-  }
+  if (notifyPartner && chatIsConnected()) sendJson({ type: "chat-clear" });
+  closePreview();
 }
-
+function makeBlobUrl(data, mime) {
+  const binary = atob(data);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  const url = URL.createObjectURL(new Blob([bytes], { type: mime }));
+  localObjectUrls.push(url);
+  return url;
+}
 function appendChatMessage(item) {
   const currentEmpty = chatMessages.querySelector(".chat-empty");
   if (currentEmpty) currentEmpty.remove();
@@ -1382,38 +1165,40 @@ function appendChatMessage(item) {
 
   const meta = document.createElement("div");
   meta.className = "chat-meta";
-  meta.textContent =
-    (item.mine ? "You" : item.from || "Partner") +
-    " · " +
+  meta.textContent = (item.mine ? "You" : item.from || "Partner") + " · " +
     new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
   bubble.appendChild(meta);
 
   if (item.kind === "voice") {
-    const audio = document.createElement("audio");
-    audio.controls = true;
-    audio.preload = "none";
-
     try {
-      const binary = atob(item.data);
-      const bytes = new Uint8Array(binary.length);
-
-      for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-
-      const blob = new Blob([bytes], { type: item.mime || "audio/webm" });
-      const url = URL.createObjectURL(blob);
-
-      audio.src = url;
-      localVoiceUrls.push(url);
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "none";
+      audio.src = makeBlobUrl(item.data, item.mime || "audio/webm");
+      bubble.appendChild(audio);
     } catch {
       const fallback = document.createElement("div");
       fallback.textContent = "Voice note couldn't be played on this device.";
       bubble.appendChild(fallback);
     }
-
-    bubble.appendChild(audio);
+  } else if (item.kind === "media") {
+    const isImage = item.mediaType === "image";
+    const attachment = document.createElement("button");
+    attachment.type = "button";
+    attachment.className = "media-attachment";
+    attachment.innerHTML =
+      '<span class="media-attachment-icon">' + (isImage ? "▧" : "▶") + '</span>' +
+      '<span><span class="media-attachment-title">' + (isImage ? "Photo attachment" : "Video attachment") +
+      '</span><span class="media-attachment-hint">Tap to open</span></span>';
+    attachment.addEventListener("click", () => {
+      try {
+        const url = makeBlobUrl(item.data, item.mime);
+        openPreview(url, item.mediaType, item.name);
+      } catch {
+        setChatStatus("This attachment couldn't be opened.");
+      }
+    });
+    bubble.appendChild(attachment);
   } else {
     const content = document.createElement("div");
     content.className = "chat-content";
@@ -1424,6 +1209,30 @@ function appendChatMessage(item) {
   chatMessages.appendChild(bubble);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+function openPreview(url, mediaType, name) {
+  mediaPreviewBody.replaceChildren();
+  const element = document.createElement(mediaType === "image" ? "img" : "video");
+  element.src = url;
+  element.alt = name || "Shared photo";
+  if (mediaType === "video") {
+    element.controls = true;
+    element.playsInline = true;
+    element.preload = "metadata";
+  }
+  mediaPreviewBody.appendChild(element);
+  mediaPreview.classList.add("open");
+}
+function closePreview() {
+  mediaPreview.classList.remove("open");
+  mediaPreviewBody.replaceChildren();
+}
+closeMediaPreview.addEventListener("click", closePreview);
+mediaPreview.addEventListener("click", event => {
+  if (event.target === mediaPreview) closePreview();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closePreview();
+});
 
 function sendChatPayload(payload) {
   if (!chatIsConnected()) {
@@ -1431,40 +1240,29 @@ function sendChatPayload(payload) {
     updateChatAvailability();
     return false;
   }
-
   if (!sendJson(payload)) {
     setChatStatus("Couldn't send that. Try again when connected.");
     return false;
   }
-
   return true;
 }
 
 companionLauncher.addEventListener("click", () => {
   companionPanel.classList.toggle("open");
   updateChatAvailability();
-
   if (companionPanel.classList.contains("open")) {
     chatInput.focus({ preventScroll: true });
   }
 });
-
-closeChatBtn.addEventListener("click", () => {
-  companionPanel.classList.remove("open");
-});
-
+closeChatBtn.addEventListener("click", () => companionPanel.classList.remove("open"));
 discreetBtn.addEventListener("click", () => {
   discreetMode = !discreetMode;
   companionPanel.classList.toggle("discreet", discreetMode);
   discreetBtn.textContent = discreetMode ? "Reveal" : "Discreet";
-
-  setChatStatus(
-    discreetMode
-      ? "Message text is blurred. Tap or press a message to reveal it."
-      : "Discreet mode off."
-  );
+  setChatStatus(discreetMode
+    ? "Message text is blurred. Tap or press a message to reveal it."
+    : "Discreet mode off.");
 });
-
 clearChatBtn.addEventListener("click", () => {
   clearChatDisplay(true);
   setChatStatus("Chat view cleared on this device.");
@@ -1472,15 +1270,12 @@ clearChatBtn.addEventListener("click", () => {
 
 chatForm.addEventListener("submit", event => {
   event.preventDefault();
-
   const text = chatInput.value.trim();
   if (!text) return;
-
   if (text.length > 1200) {
     setChatStatus("Messages can be up to 1,200 characters.");
     return;
   }
-
   if (sendChatPayload({ type: "chat-message", text })) {
     appendChatMessage({ from: "You", mine: true, text, kind: "text" });
     chatInput.value = "";
@@ -1488,12 +1283,10 @@ chatForm.addEventListener("submit", event => {
     setChatStatus("");
   }
 });
-
 chatInput.addEventListener("input", () => {
   chatInput.style.height = "auto";
   chatInput.style.height = Math.min(chatInput.scrollHeight, 96) + "px";
 });
-
 chatInput.addEventListener("keydown", event => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
@@ -1501,47 +1294,123 @@ chatInput.addEventListener("keydown", event => {
   }
 });
 
-document.querySelectorAll("[data-signal]").forEach(button => {
-  button.addEventListener("click", () => {
-    const signal = button.dataset.signal;
-    if (!signalCopy[signal]) return;
+/* PHOTO AND VIDEO SENDING */
+photoBtn.addEventListener("click", () => photoInput.click());
+videoBtn.addEventListener("click", () => videoInput.click());
+photoInput.addEventListener("change", () => handleMediaSelection(photoInput.files[0], "image"));
+videoInput.addEventListener("change", () => handleMediaSelection(videoInput.files[0], "video"));
 
-    if (sendChatPayload({ type: "chat-signal", signal })) {
+async function handleMediaSelection(file, mediaType) {
+  if (!file) return;
+  const input = mediaType === "image" ? photoInput : videoInput;
+
+  try {
+    if (!chatIsConnected()) {
+      setChatStatus("Connect to your room before sending media.");
+      return;
+    }
+
+    let blob = file;
+    let mime = file.type || (mediaType === "image" ? "image/jpeg" : "video/mp4");
+
+    if (mediaType === "image") {
+      blob = await compressImage(file);
+      mime = blob.type || "image/jpeg";
+    }
+
+    if (blob.size > MAX_MEDIA_BYTES) {
+      setChatStatus("This file is larger than 5 MB. Choose a smaller file or shorter video.");
+      return;
+    }
+
+    if (mediaType === "video" && !/^video\/(mp4|webm|quicktime|3gpp|x-m4v)/i.test(mime)) {
+      setChatStatus("This video format may not be supported. Try an MP4 video.");
+      return;
+    }
+
+    const data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    if (!data || data.length > MAX_MEDIA_DATA_LENGTH) {
+      setChatStatus("This attachment is too large to send.");
+      return;
+    }
+
+    const name = String(file.name || (mediaType === "image" ? "photo.jpg" : "video.mp4")).slice(0, 100);
+    const payload = {
+      type: "chat-media",
+      mediaType,
+      mime,
+      name,
+      data
+    };
+
+    if (sendChatPayload(payload)) {
       appendChatMessage({
         from: "You",
         mine: true,
-        text: signalCopy[signal],
-        kind: "signal"
+        kind: "media",
+        data,
+        mime,
+        mediaType,
+        name
       });
-
-      setChatStatus("");
+      setChatStatus(mediaType === "image" ? "Photo sent." : "Video sent.");
     }
-  });
-});
+  } catch {
+    setChatStatus("Couldn't prepare this attachment. Try another file.");
+  } finally {
+    input.value = "";
+  }
+}
 
+async function compressImage(file) {
+  if (!file.type.startsWith("image/")) throw new Error("Not an image");
+  const imageUrl = URL.createObjectURL(file);
+  try {
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = imageUrl;
+    });
+
+    const maxDimension = 1600;
+    const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const result = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", .78));
+    if (!result) throw new Error("Image compression failed");
+    return result;
+  } finally {
+    URL.revokeObjectURL(imageUrl);
+  }
+}
+
+/* VOICE NOTES */
 async function startVoiceNote() {
   if (!chatIsConnected()) {
     setChatStatus("Connect to your room before recording.");
     return;
   }
-
-  if (
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia ||
-    typeof MediaRecorder === "undefined"
-  ) {
-    setChatStatus("Voice recording isn't supported here. Try the app over HTTPS.");
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    setChatStatus("Voice recording isn't supported here. Try the site over HTTPS.");
     return;
   }
 
   let stream;
-
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recordedChunks = [];
-
     const options = {};
-
     if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
       options.mimeType = "audio/webm;codecs=opus";
     } else if (MediaRecorder.isTypeSupported("audio/webm")) {
@@ -1550,10 +1419,9 @@ async function startVoiceNote() {
 
     mediaRecorder = new MediaRecorder(stream, options);
     recordingStartedAt = Date.now();
-
     recordBtn.classList.add("recording");
     recordBtn.textContent = "■";
-    setChatStatus("Recording… tap ■ to send, max 15 seconds.");
+    setChatStatus("Recording... tap ■ to send, maximum 15 seconds.");
 
     mediaRecorder.addEventListener("dataavailable", event => {
       if (event.data && event.data.size) recordedChunks.push(event.data);
@@ -1565,17 +1433,13 @@ async function startVoiceNote() {
       recordBtn.textContent = "🎙";
       stream.getTracks().forEach(track => track.stop());
 
-      const blob = new Blob(recordedChunks, {
-        type: mediaRecorder.mimeType || "audio/webm"
-      });
-
+      const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || "audio/webm" });
       recordedChunks = [];
 
       if (!blob.size) {
         setChatStatus("No audio was captured. Try again.");
         return;
       }
-
       if (blob.size > 330000) {
         setChatStatus("That recording is too large. Try a shorter note.");
         return;
@@ -1584,11 +1448,7 @@ async function startVoiceNote() {
       try {
         const data = await new Promise((resolve, reject) => {
           const reader = new FileReader();
-
-          reader.onload = () => {
-            resolve(String(reader.result).split(",")[1] || "");
-          };
-
+          reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
           reader.onerror = reject;
           reader.readAsDataURL(blob);
         });
@@ -1598,25 +1458,14 @@ async function startVoiceNote() {
           return;
         }
 
-        const payload = {
+        const mime = blob.type || "audio/webm";
+        if (sendChatPayload({
           type: "voice-note",
           data,
-          mime: blob.type || "audio/webm",
-          duration: Math.min(
-            15,
-            Math.round((Date.now() - recordingStartedAt) / 1000)
-          )
-        };
-
-        if (sendChatPayload(payload)) {
-          appendChatMessage({
-            from: "You",
-            mine: true,
-            kind: "voice",
-            data,
-            mime: blob.type || "audio/webm"
-          });
-
+          mime,
+          duration: Math.min(15, Math.round((Date.now() - recordingStartedAt) / 1000))
+        })) {
+          appendChatMessage({ from: "You", mine: true, kind: "voice", data, mime });
           setChatStatus("Voice note sent.");
         }
       } catch {
@@ -1625,40 +1474,25 @@ async function startVoiceNote() {
     }, { once: true });
 
     mediaRecorder.start(250);
-
     recordLimitTimer = setTimeout(() => {
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-      }
+      if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
     }, 15000);
   } catch (error) {
     if (stream) stream.getTracks().forEach(track => track.stop());
-
-    setChatStatus(
-      error && error.name === "NotAllowedError"
-        ? "Microphone permission was denied."
-        : "Couldn't start recording. Check your microphone."
-    );
-
+    setChatStatus(error?.name === "NotAllowedError"
+      ? "Microphone permission was denied."
+      : "Couldn't start recording. Check your microphone.");
     recordBtn.classList.remove("recording");
     recordBtn.textContent = "🎙";
   }
 }
-
 function stopVoiceNote() {
   clearTimeout(recordLimitTimer);
-
-  if (mediaRecorder && mediaRecorder.state === "recording") {
-    mediaRecorder.stop();
-  }
+  if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
 }
-
 recordBtn.addEventListener("click", () => {
-  if (mediaRecorder && mediaRecorder.state === "recording") {
-    stopVoiceNote();
-  } else {
-    startVoiceNote();
-  }
+  if (mediaRecorder && mediaRecorder.state === "recording") stopVoiceNote();
+  else startVoiceNote();
 });
 
 window.addEventListener("beforeunload", () => {
@@ -1666,9 +1500,7 @@ window.addEventListener("beforeunload", () => {
   clearTimeout(reconnectTimer);
   clearTimeout(recordLimitTimer);
   stopVibration();
-
-  localVoiceUrls.forEach(url => URL.revokeObjectURL(url));
-
+  releaseObjectUrls();
   if (socket) socket.close();
 });
 
@@ -1676,35 +1508,6 @@ updateChatAvailability();
 currentPattern = "continuous";
 modeSelect.value = "continuous";
 resizeCanvas();
-
-/* Remove unwanted chat shortcuts and the "Just Us" label */
-function removeUnwantedChatElements() {
-  document.querySelectorAll(
-    "#privateChat button, #privateChat a, #privateChat [role='button']"
-  ).forEach(element => {
-    const label = (element.innerText || element.textContent || "")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    if (/^(❤️?\s*)?(miss you|kiss|hug|heartbeat)(\s*❤️?)?$/i.test(label)) {
-      element.remove();
-    }
-  });
-
-  document.querySelectorAll(
-    "#privateChat h1, #privateChat h2, #privateChat h3, #privateChat h4, #privateChat p, #privateChat span, #privateChat div"
-  ).forEach(element => {
-    if (
-      element.children.length === 0 &&
-      /^just us[.!❤️💕\s]*$/i.test(element.textContent.trim())
-    ) {
-      element.remove();
-    }
-  });
-}
-
-removeUnwantedChatElements();
-
 </script>
 </body>
 </html>
